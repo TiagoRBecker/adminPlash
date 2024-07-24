@@ -1,8 +1,8 @@
 "use client";
 import Spinner from "@/components/Spinner";
 import { useState, useEffect, useRef } from "react";
-import { Viewer, Worker } from "@react-pdf-viewer/core/lib";
-import "@react-pdf-viewer/core/lib/styles/index.css";
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
 import { baseURL, url } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
