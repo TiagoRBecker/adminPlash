@@ -1,5 +1,5 @@
-export const baseURL = "https://ede9-177-22-167-216.ngrok-free.app/admin/"
-export const url = "https://ede9-177-22-167-216.ngrok-free.app"
+export const baseURL = "https://71b6-2804-4b0-11a2-100-6d58-349b-6ca8-effe.ngrok-free.app/admin/"
+export const url = "https://71b6-2804-4b0-11a2-100-6d58-349b-6ca8-effe.ngrok-free.app"
 //"http://localhost:5000"
 //"http://191.101.70.103:5000"
 class Categories  {
