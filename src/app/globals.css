@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+  
+  .custom-swal-popup {
+   width: 400px !important;
+  }
+.showMenu {
+  width: 350px;
+  height: 100%;
+  background-color: #14b7a1;
+ z-index: 999;
+  transform: translateX(0px);
+  transition: all ease-in-out 0.8s;
+  position: fixed;
+}
+
+.hideMenu {
+  position: fixed;
+  width: 350px;
+  height: 100%;
+  background-color: #14b7a1;
+z-index: 999;
+  transform: translateX(-330px);
+  transition: all ease-in-out 0.8s;
+}
+
+
+.react-datepicker {
+display: flex !important;
+width: 100%;
+  
+
+}
+.react-datepicker__month-container{
+  width: 80%;
+}
+.react-datepicker__time-container {
+  width: 20%;
+}
+.react-datepicker__header react-datepicker__header--has-time-select{
+  width: 100%;
+}

@@ -1,0 +1,1029 @@
+.dvlClient
+ 
+user
+ 
+Clicks
+ 
+rgba(0,_0,_0,_0.24)_0px_3px_8px
+ 
+shadow-[
+ 
+decrease
+ 
+Clicked
+ 
+red-500
+ 
+Finalizado
+ 
+<p className="text-green-500">Ativo</p>
+ 
+ {
+                      
+                    }
+ 
+<table className="w-full bg-white ">
+          <thead className="bg-[#14b7a1]  text-white">
+            <tr>
+              <th className="py-2 px-4 text-left">Nome</th>
+              <th className="py-2 px-4 text-left">Produto</th>
+              <th className="py-2 px-4 text-left">Receber</th>
+              <th className="py-2 px-4 text-left">Pago</th>
+              <th className="py-2 px-4 text-left">Status</th>
+              <th className="py-2 px-4 text-left">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-400">
+            {dvl?.map((dvl: any, index: number) => (
+              <tr key={index} className="border-b-[1px] border-gray-300 ">
+                <td className="py-2 px-4">{dvl.name}</td>
+                <td className="py-2 px-4">
+                  {Number(dvl.price).toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </td>
+                <td className="py-2 px-4">
+                  {Number(dvl.paidOut).toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </td>
+                <td className="py-2 px-4">
+                  {Number(dvl.toReceive).toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </td>
+                <td className="py-2 px-4">
+                  
+                </td>
+
+                <td className="py-2 px-4 flex gap-2 ">
+                  
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+ 
+<td>
+
+                  </td>
+ 
+Enviado
+ 
+51 999-999-999
+ 
+color={"#14b7a1"}
+ 
+"#14b7a1" 
+ 
+paidOut
+ 
+ Number(290)
+ 
+dvl.paidOut + 80
+ 
+toReceive
+ 
+dvl.toReceive === dvl.price ? 100 :
+ 
++ 60
+ 
+paidOut
+ 
+leoanardo@gmail.com
+ 
+pago
+ 
+pago
+ 
+Telefone
+ 
+Email
+ 
+ <div className="w-full h-full flex flex-col">
+        <h1>Ultimos Artihos adiciondos</h1>
+        <div className="w-full    h-full grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Colaboradores</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Clientes</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Artigos</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Revistas</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Categorias</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full h-full flex flex-col">
+        <h1>Ultimas Categorias adiciondas</h1>
+        <div className="w-full    h-full grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Colaboradores</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Clientes</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Artigos</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Revistas</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+          <div className="flex flex-col items-center justify-center gap-2 bg-blue-600 rounded-md text-white">
+            <h1>Categorias</h1>
+            <p className="w-8 h-8 rounded-full border-[1px] border-white flex items-center justify-center">
+              1
+            </p>
+          </div>
+        </div>
+      </div>
+ 
+<h1 className="w-full text-left text-lg text-gray-500 ">Ultimos Pedidos </h1>
+ 
+onClick={onClose}
+ 
+ fixed z-50
+ 
+placement  as any
+ 
+const [placement, setPlacement] = React.useState('left')
+ 
+items-center
+ 
+{showMenu ? (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-6 h-6 text-white"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6 18 18 6M6 6l12 12"
+        />
+      </svg>
+    ) : (
+    
+    )}
+ 
+ <div className="w-full h-20 flex items-center justify-between  px-4">
+          <img
+            src="/logo.png"
+            alt=""
+            className="w-[50%] h-16 object-contain "
+          />
+        </div>
+ 
+  </div>
+ 
+ <div
+        className="w-full text-right flex items-center justify-end  "
+        onClick={openMenu}
+      >
+ 
+{showMenu ? "showMenu" : "hideMenu"}
+ 
+Basic Drawer
+ 
+
+              <Dash />
+ 
+<p>Some contents...</p>
+              <p>Some contents...</p>
+              <p>Some contents...</p>
+ 
+as string
+ 
+import { Button } from "react-bootstrap";
+ 
+<RadioGroup defaultValue={placement} onChange={setPlacement}>
+          <Stack direction='row' mb='4'>
+            <Radio value='top'>Top</Radio>
+            <Radio value='right'>Right</Radio>
+            <Radio value='bottom'>Bottom</Radio>
+            <Radio value='left'>Left</Radio>
+          </Stack>
+        </RadioGroup>
+ 
+right
+ 
+ const [show,setShow] = useState(true)
+  const handleMenu = ()=>{
+  setShow(!show)
+  }
+ 
+import Link from "next/link";
+ 
+import Header from "@/components/Header";
+ 
+  <table className="w-full bg-white ">
+        <thead className="bg-[#005183] text-white">
+          <tr>
+            <th className="py-2 px-4 text-left">Nome</th>
+            <th className="hidden md:py-2 px-4 text-left ">Email</th>
+            <th className="py-2 px-4 text-left">Telefone</th>
+            <th className="py-2 px-4 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-400">
+          <tr className="border-b-[1px] border-gray-300">
+            <td className="py-2 px-4">Leonardo Paiva</td>
+            <td className="hidden md:py-2 px-2">leonardopaiva@gmail.com</td>
+            <td className="py-2 px-2">55 999-999-999</td>
+
+            <td className="py-2 px-2 flex gap-2 ">Em andamento</td>
+          </tr>
+
+
+        </tbody>
+      </table>
+ 
+  
+} from '@chakra-ui/react'
+ 
+  <table className="w-full bg-white ">
+        <thead className="bg-[#005183] text-white">
+          <tr>
+            <th className="py-2 px-4 text-left">Nome</th>
+            <th className="hidden md:py-2 px-4 text-left ">Email</th>
+            <th className="py-2 px-4 text-left">Telefone</th>
+            <th className="py-2 px-4 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody className="text-gray-400">
+          <tr className="border-b-[1px] border-gray-300">
+            <td className="py-2 px-4">Leonardo Paiva</td>
+            <td className="hidden md:py-2 px-2">leonardopaiva@gmail.com</td>
+            <td className="py-2 px-2">55 999-999-999</td>
+
+            <td className="py-2 px-2 flex gap-2 ">Em andamento</td>
+          </tr>
+
+
+        </tbody>
+      </table>
+ 
+Imperial to metric conversion factors
+ 
+<Tfoot>
+            <Tr>
+              <Th>Ultimos pedidos adicionados</Th>
+           
+            </Tr>
+          </Tfoot>
+ 
+To convert
+ 
+   <Th>into</Th>
+              <Th isNumeric>multiply by</Th>
+ 
+  <Tr>
+              <Td>yards</Td>
+              <Td>metres (m)</Td>
+              <Td isNumeric>0.91444</Td>
+            </Tr>
+ 
+<Tr>
+              <Td>feet</Td>
+              <Td>centimetres (cm)</Td>
+              <Td isNumeric>30.48</Td>
+            </Tr>
+ 
+isNumeric>25.4
+ 
+millimetres (mm)
+ 
+inches
+ 
+Telefone
+ 
+isNumeric>multiply by
+ 
+To convert
+ 
+  console.log(magazines);
+ 
+md:
+ 
+w-full flex flex-col gap-2
+ 
+w-full flex flex-col gap-2
+ 
+bg-red-300
+ 
+items-center justify-center md:
+ 
+gap-3
+ 
+w-full flex px-4 items-center justify-center gap-4
+ 
+w-full flex px-4 items-center justify-center gap-4
+ 
+flex-col
+ 
+sm:w-1/2
+ 
+xl:w-1/4
+ 
+md:w-1/4 lg:w-1/4
+ 
+<div className="w-full h-44 grid gap-2 grid-cols-4 ">
+ 
+ sm:grid-cols-1
+ 
+ grid-cols-2 lg:
+ 
+
+          <tr className="border-b-[1px] border-gray-300">
+            <td className="py-2 px-4">Leonardo Paiva</td>
+
+            <td className="py-2 px-2">leonardopaiva@gmail.com</td>
+            <td className="py-2 px-2">55 999-999-999</td>
+
+            <td className="py-2 px-2 flex gap-2 ">Em andamento</td>
+          </tr>
+
+ 
+
+          <tr className="border-b-[1px] border-gray-300">
+            <td className="py-2 px-4">Leonardo Paiva</td>
+            <td className="py-2 px-2">leonardopaiva@gmail.com</td>
+            <td className="py-2 px-2">55 999-999-999</td>
+
+            <td className="py-2 px-2 flex gap-2 ">Em andamento</td>
+          </tr>
+ 
+
+          <tr className="border-b-[1px] border-gray-300">
+            <td className="py-2 px-4">Leonardo Paiva</td>
+            <td className="hidden md:py-2 px-2">leonardopaiva@gmail.com</td>
+            <td className="py-2 px-2">55 999-999-999</td>
+
+            <td className="py-2 px-2 flex gap-2 ">Em andamento</td>
+          </tr>
+ 
+md:hidden
+ 
+hidden md:
+ 
+false
+ 
+5
+ 
+  position: fixed;
+ 
+ position: fixed;
+ 
+red-600
+ 
+"flex w-[250px] gap-5 bg-[#14b7a1]"
+ 
+white
+ 
+[50%]
+ 
+w-[5%]  h-full    fixed bg-[#14b7a1]
+ 
+showMenu
+ 
+w-[28%] h-full flex flex-col   fixed bg-[#14b7a1] 
+ 
+.showFilter {
+  width: 380px;
+  height: 100%;
+  
+  transition: all ease-in-out 0.4s;
+  transform: translateX(0px);
+  background-color: white;
+ 
+  
+}
+ 
+
+.quadrado-arco {
+  width: 100px; /* Ajuste conforme necessário */
+  height: 50px; /* Ajuste conforme necessário */
+  background-color: #120D31;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 50% 100%;
+  border-top-right-radius: 50% 100%;
+  border:solid 2px #ccc;
+  transform: rotate(90deg);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  top: 50vh;
+  left: -40px;
+}
+ 
+.closeFilter{
+  width: 0px;
+  height: 100%;
+  transition: all ease-in-out 0.5s;
+  background-color: white;
+  transform: translateX(-380px);
+}
+.parallax{
+  width: 100%;
+  height: 100vh;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: url('/bglogin.jpg');
+  filter: brightness(35%);
+}
+.parallax_news{
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),url('/dream.avif');
+  background-position: center;
+  background-size: cover; /* Alterei para 'cover' para ocupar toda a tela */
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
+ 
+}
+ 
+display="flex"
+ 
+flex flex-col
+ 
+black
+ 
+bg-blue-500
+ 
+[23%]
+ 
+w-[28%] h-screen   
+ 
+mt-[70px]
+ 
+full
+ 
+
+body{
+  overflow: hidden !important;
+}
+ 
+flex-grow overflow-auto 
+ 
+md
+ 
+ ml-0
+ 
+ ml-0 w-full md:h-full flex-grow overflow-auto 
+ 
+md:ml-[320px]
+ 
+!imporant
+ 
+overflow-hidden
+ 
+fixed hidden md:block
+ 
+ col-span-2
+ 
+onClick={handleMenu}
+ 
+ <h1 className="w-full text-left text-3xl text-gray-400 py-6">
+        Bem vindo ao painel Administrativo
+      </h1>
+ 
+h-full flex-grow  overflow-auto ml-[320px]  
+ 
+md:ml-0
+ 
+hidden
+ 
+   <aside className="w-[24%] h-full  block col-span-2 bg-[#14b7a1] fixed md:hidden">
+ 
+hidden md
+ 
+} `
+ 
+hidden md:${show ? "
+ 
+false
+ 
+ border-r-[1px] border-gray-400
+ 
+justify-between 
+ 
+white
+ 
+_branco2
+ 
+full
+ 
+  const searchData = () => {};
+ 
+
+
+ 
+  <Header search={searchData} />
+ 
+onClick={openMenu}
+ 
+bg-blue-500
+ 
+full
+ 
+w-full
+ 
+flex items-center justify-center
+ 
+items-center justify-center
+ 
+44
+ 
+  </div>
+ 
+    <div className={showMenu ? "block" : "hidden"}>
+ 
+Icone
+ 
+import type { Metadata } from "next";
+ 
+export const metadata: Metadata = {
+  title: "Create Next App",
+  description: "Generated by create next app",
+};
+ 
+menu
+ 
+hidden 
+ 
+hidden
+ 
+md:ml-0
+ 
+hidden md:
+ 
+md:
+ 
+lg:ml-0
+ 
+md:
+ 
+w-full
+ 
+    <div className="w-full flex items-center justify-center mt-4">
+          <Link href={"/dashboard/categorias/adicionar_categoria"}>
+            <button className="px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
+              Adicionar Categoria
+            </button>
+          </Link>
+        </div>
+ 
+import { Spinner } from "react-bootstrap";
+ 
+   console.log(response)
+ 
+ return;
+ 
+https://bit.ly/dan-abramov
+ 
+ <img src="/user.png" alt="Logo" className="w-8 h-8 object-cover rounded-full " />
+        <p className="text-gray-500">Leonardo Paiva</p>
+ 
+  <p className="text-[#333] text-base">Carregando...</p>
+ 
+false
+ 
+cover
+ 
+[#005183]
+ 
+GrayText
+ 
+whitesmoke
+ 
+className="border-none"
+ 
+o-border-accordion
+ 
+textAlign={"center"}
+ 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+                ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat.
+ 
+Section 1 title
+ 
+dashboard
+ 
+    <AccordionItem>
+          <h2>
+            <AccordionButton>
+              <Box as="span" flex="1" textAlign="left">
+                Section 2 title
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h2>
+          <AccordionPanel pb={4}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </AccordionPanel>
+        </AccordionItem>
+ 
+ul className="w-full h-full flex flex-col items-center  gap-6">
+        {dashboard.map((links: any, index: any) => (
+          <li
+            className={
+              path === links.link
+                ? "w-[80%] rounded-md flex items-center gap-2 bg-blue-500  text-white text-sm py-2 px-2"
+                : "w-[80%] py-2 px-2 rounded-md flex items-center gap-2 text-sm  text-white "
+            }
+            key={index}
+          >
+            <p>{links.icon}</p>
+            <Link
+              href={links.link}
+              className="w-full flex items-center justify-start pt-1 "
+            >
+              {links.pathname}
+            </Link>
+          </li>
+        ))}
+        <li className="w-[80%] rounded-md flex items-center gap-2   text-white uppercase py-2 px-2">
+          <p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
+              />
+            </svg>
+          </p>
+          <button onClick={handleLogout} className="w-full flex items-center justify-start pt-1 text-sm  ">
+            Sair
+          </button>
+        </li>
+      </ul>
+ 
+colaboradores
+ 
+Exibir
+ 
+dvl
+ 
+(
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="w-6 h-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
+  ),
+ 
+DVL
+ 
+{name:"Cadastrar Categorias", path:"/dashboard/categorias/cadastrar"}
+ 
+categorias
+ 
+Categorias
+ 
+Categorias
+ 
+artigos
+ 
+artigos
+ 
+Artigos
+ 
+Artigos
+ 
+Artigos
+ 
+revistas
+ 
+revistas
+ 
+Exibir Revistas
+ 
+Exibir Revistas
+ 
+Revistas
+ 
+revistas
+ 
+icon:""
+ 
+icon:""
+ 
+   name:"Exibir Revistas", path:"/dashboard/revistas",
+ 
+path
+ 
+nome
+ 
+ {
+    id:1,name:'Revistas'
+    {
+
+    }
+  }
+ 
+
+        {children}
+ 
+import Nav from "@/components/Nav"
+ 
+a ser pago e mair do que o dvl do produto
+ 
+,slug
+ 
+params.slug}
+ 
+slug
+ 
+Adiconar Nova Categoria
+ 
+w-full
+ 
+[50%]
+ 
+dvl ${}
+ 
+text
+ 
+A Pagar
+ 
+toReceive
+ 
+receber
+ 
+price
+ 
+Total do DVL
+ 
+dvl
+ 
+console.log(response)
+ 
+id
+ 
+Pago
+ 
+Falta pagar
+ 
+toReceive
+ 
+name
+ 
+Nome
+ 
+Pago
+ 
+Pago
+ 
+category.article.length
+ 
+.magazine.length
+ 
+category
+ 
+category
+ 
+category
+ 
+category
+ 
+Artigos
+ 
+Revistas
+ 
+Categorias
+ 
+categories
+ 
+  <button
+                      onClick={() => deletCat(category.id, category.name)}
+                      className="text-red-500"
+                    >
+                      Deletar
+                    </button>
+ 
+categorias
+ 
+export const citys = [
+  "Novo Hamburgo",
+  "Tapes",
+  "Porto Alegre",
+  "Tramandaí",
+  "Capão Da Canoa",
+];
+ 
+export const bedrooms = ["1", "2", "3", "4"];
+export const suites = ["1", "2", "3", "4"];
+export const garage = ["1", "2", "3", "4", "6"];
+export const Lowprices = [
+  "450,00",
+  "850,00",
+  "1,000,00",
+  "1,500,00",
+  "1,000,00",
+  "5,000,00",
+  "10,000,00",
+  "50,000,00",
+];
+export const highPrices = [
+  "2,500,00",
+  "3,500,00",
+  "4,000,00",
+  "5,000,00",
+  "70,000,00",
+  "90,000,00",
+  "110,000,00",
+  "+ de 500,000,00",
+];
+export const icons = ["/fb.svg", "/t.svg", "/yt.svg", "/inst.svg"];
+ 
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-6 h-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z"
+        />
+      </svg>
+ 
+pedidos
+ 
+Pedidos
+ 
+  <th className="py-2 px-4 text-left">Sub Categoria </th>
+ 
+      <td className="py-2 px-4">{magazine.SubCategory?.name} </td>
+ 
+getArticleById
+ 
+  subCategoryId: z.any().refine(
+    (value) => {
+      return value !== "" && value !== null;
+    },
+    { message: "Selecione uma opção válida" }
+  ),
+ 
+Article
+ 
+magazineID
+ 
+Article
+ 
+article,
+ 
+Article
+ 
+article
+ 
+Article
+ 
+name
+ 
+name
+ 
+name
+ 
+ const filterSubCAtegoryByCategory = categories.filter(
+    (name: any) => Number(name.id) === Number(selectCat)
+  );
+ 
+ {filterSubCAtegoryByCategory && (
+              <>
+                <div className="w-full  flex items-center justify-between">
+                  <p>Sub Categoria</p>
+
+                  <select
+                    {...register("subCategoryId")}
+                    className="w-[50%] h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
+                  >
+                    {filterSubCAtegoryByCategory.map(
+                      (subcat: any, index: number) => (
+                        <>
+                        
+                          {subcat.subcategory.map(
+                            (name: any, index: number) => (
+                              <option value={name.id}>{name.name}</option>
+                            )
+                          )}
+                        </>
+                      )
+                    )}
+                  </select>
+                </div>
+
+                {errors.subCategoryId && (
+                  <p className="text-red-400 text-sm">
+                    {errors.subCategoryId.message as any}
+                  </p>
+                )}
+              </>
+            )}
+ 
+categories
+ 
+ CategoriesApi.getCategories();
+ 
+{filterSubCAtegoryByCategory && (
+              <>
+                <div className="w-full  flex items-center justify-between">
+                  <p>Sub Categoria</p>
+
+                  <select
+                    {...register("subCategoryId")}
+                    className="w-[50%] h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
+                  >
+                    {filterSubCAtegoryByCategory.map(
+                      (subcat: any, index: number) => (
+                        <>
+                          {subcat.subcategory.map(
+                            (name: any, index: number) => (
+                              <option value={name.id}>{name.name}</option>
+                            )
+                          )}
+                        </>
+                      )
+                    )}
+                  </select>
+                </div>
+
+                {errors.subCategoryId && (
+                  <p className="text-red-400 text-sm">
+                    {errors.subCategoryId.message as any}
+                  </p>
+                )}
+              </>
+            )}
+ 
+listCategory
+ 
