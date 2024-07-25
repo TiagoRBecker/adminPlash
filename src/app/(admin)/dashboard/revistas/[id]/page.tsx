@@ -102,7 +102,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
         method: "GET",
       });
       const response = await getCat.json();
-
+     console.log(response)
       setCategories(response);
       return;
     } catch (error) {

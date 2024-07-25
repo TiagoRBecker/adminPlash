@@ -5,18 +5,23 @@ import { authOptions } from "../utils/authoption";
 import { Suspense } from "react";
 import Loading from "../Spinner";
 const getLastUsers = async (token:string)=>{
-   const request =  await fetch(`${baseURL}last-users`, {
-    method: "GET",
-    cache:"no-cache",
-    headers:{
-      Authorization:`Bearer ${token}`
-    }
+  try {
+    const request =  await fetch(`${baseURL}last-users`, {
+      method: "GET",
+      cache:"no-cache",
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+     
+      
+    });
+    const response = await request.json()
    
-    
-  });
-  const response = await request.json()
- 
-  return response
+    return response
+  } catch (error) {
+    console.log(error)
+  }
+  
   
 }
 const lastUsers = async  () => {

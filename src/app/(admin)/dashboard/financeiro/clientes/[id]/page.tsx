@@ -96,7 +96,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
     (acc: any, currentValue: any) => acc + currentValue.toReceive,
     0
   );
-
+  console.log(total)
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const custom = "flex items-center";
@@ -317,7 +317,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
                 </p>
               </div>
             </Box>
-            {Number(total) < 30 ? (
+            {Number(total) < 50 ? (
               <Box shadow={"2xl"} bg="red" p={8} color="white" w={"90%"}>
                 <h2 className="text-center">Dispoivel para saque</h2>
                 <div className="w-full flex items-center justify-center gap-2">
@@ -376,7 +376,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
             )}
           </div>
 
-        {Number(total) > 30 && 
+        {Number(total) > 50 && 
             <form className="w-full py-4 " onSubmit={onSubmit}>
               <div className="w-full flex  gap-4">
                 <div className="w-full flex flex-col gap-2">

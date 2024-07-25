@@ -1,4 +1,4 @@
-import Notification from "@/components/Notification";
+
 import Orders from "@/components/Orders/";
 import Chart from "@/components/Orders/chart";
 import Google from "@/components/Analitcs";
@@ -11,6 +11,7 @@ import { Suspense } from "react";
 import Events from "@/components/Events";
 import Dvl from "@/components/Dvls/index";
 import Loading from "@/components/Spinner";
+import Comission from "@/components/Comission";
 
 const Dashboard = async () => {
   return (
@@ -39,7 +40,7 @@ const Dashboard = async () => {
       </div>
       <div className="w-full flex flex-col md:w-1/2">
       <Dvl/>
-      <LastUsers />
+      <Comission />
       </div>
     </div>
   </section>

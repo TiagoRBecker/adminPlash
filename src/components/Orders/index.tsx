@@ -14,7 +14,7 @@ const OrderData =   () => {
    const order = async ()=>{
     //@ts-ignore
     const token = session?.user.token 
-      const data = await fetch(`${baseURL}orders/last`,{
+      const data = await fetch(`${baseURL}last-orders`,{
         method:"GET",
         cache:"no-cache",
         headers:{

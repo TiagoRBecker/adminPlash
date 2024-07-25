@@ -3,8 +3,7 @@ import Spinner from "@/components/Spinner";
 import React, { useState, useEffect, useRef } from "react";
 import { baseURL } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
-//@ts-ignore
-const Swal = dynamic(() => import('sweetalert2'), { ssr: false });
+import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Articles, article } from "@/components/utils/validation";

@@ -47,19 +47,24 @@ const Magazines = () => {
 
   const getMagazines = async () => {
     //@ts-ignore
-
-    const currentPage = page || 1;
-    const magazines = await fetch(`${baseURL}magazines?page=${currentPage}`, {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const response = await magazines.json();
-    setMagazine(response.magazine);
-    setTotalPages(response.total);
-    setLoading(false);
+ try {
+  const currentPage = page || 1;
+  const magazines = await fetch(`${baseURL}magazines?page=${currentPage}`, {
+    method: "GET",
+    cache: "no-cache",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const response = await magazines.json();
+  console.log(response)
+  setMagazine(response.magazine);
+  setTotalPages(response.total);
+  setLoading(false);
+ } catch (error) {
+   console.log(error)
+ }
+   
     return;
   };
   const handlFilter = async (filterValues?: any) => {

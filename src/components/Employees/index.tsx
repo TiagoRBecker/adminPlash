@@ -17,10 +17,11 @@ const getLastEmployees = async (token:string)=>{
 }
 const lastEmployees = async  () => {
   const session = await  getServerSession(authOptions)
+ 
   //@ts-ignore
    const token:any = session?.user?.token 
      const data = await getLastEmployees(token)
-      
+   
     return (
     <div  >
         <h1 className="w-full text-left text-[24px] font-bold  lg:text-[19px] text-dark-brown tracking-[-.0065em]  mb-4">

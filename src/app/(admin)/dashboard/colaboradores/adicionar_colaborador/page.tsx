@@ -16,7 +16,7 @@ const AddEmployee = () => {
   const router = useRouter();
   const [avatar, setAvatar] = useState<any>("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("")
+  const [error, setError] = useState(false)
   const {
     register,
     handleSubmit,
@@ -40,7 +40,10 @@ const AddEmployee = () => {
 
   //Funçao que carrega os dados para backend
   const onSubmit = handleSubmit(async (data) => {
-   
+    if(avatar === ""){
+      setError(true)
+      return
+    }
   
   const formData = new FormData() 
    formData.append("profile",avatar)
@@ -122,10 +125,11 @@ const AddEmployee = () => {
             >
               Carregar Imagem
             </label>
+            {error && <p className="text-red-600">Por favor insira a imagem do colaborador</p>}
           </>
         )}
       </div>
-      <div className="w-full ">
+      <div className="w-full md:w-1/2 mx-auto ">
         <form
           encType="multipart/form-data"
           onSubmit={onSubmit}
