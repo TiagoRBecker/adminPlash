@@ -1,6 +1,6 @@
 export const baseURL = "http://localhost:443/admin/"
 export const url = "http://localhost:443/public"
-//"http://localhost:5000"
+export const authUrl = "http://localhost:443/auth"
 //"http://191.101.70.103:5000"
 class Categories  {
   

@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { baseURL, url } from "./api";
+import { authUrl, baseURL, url } from "./api";
 import { NextAuthOptions } from "next-auth";
 
 
@@ -23,7 +23,7 @@ export const authOptions :NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req):Promise<any> {
-        const authLogin = await fetch(`${url}/signin/admin`, {
+        const authLogin = await fetch(`${authUrl}/signin/admin`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
