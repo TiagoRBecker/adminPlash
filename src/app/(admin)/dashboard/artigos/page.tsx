@@ -261,7 +261,7 @@ const ArticleHome = () => {
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        {book.magazine.name}
+                        {book.magazine?.name ? book.magazine?.name : "Artigo não relacionado"}
                       </Text>
                     </Td>
 

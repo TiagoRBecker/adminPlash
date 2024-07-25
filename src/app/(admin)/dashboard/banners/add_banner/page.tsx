@@ -23,7 +23,7 @@ const Banner = () => {
    const formData = new FormData()
    formData.append("banner", cover)
    formData.append("name", name)
-    console.log(cover)
+ 
     const addEvent = await Swal.fire({
       position: "center",
       title: "Tem certeza?",

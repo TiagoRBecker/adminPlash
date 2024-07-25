@@ -1,7 +1,8 @@
-export const baseURL = "http://77.37.69.19:443/admin/"
-export const url = "http://77.37.69.19:443/public"
-export const authUrl = "http://77.37.69.19:443/auth"
+export const baseURL = "http://localhost:443/admin/"
+export const url = "http://localhost:443/public"
+export const authUrl = "http://localhost:443/auth"
 //"http://191.101.70.103:5000"
+//http://77.37.69.19:443
 class Categories  {
   
   async getCategories(){
