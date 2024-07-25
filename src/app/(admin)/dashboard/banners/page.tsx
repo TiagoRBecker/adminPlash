@@ -26,6 +26,7 @@ const getBanner = async () => {
     cache: "no-cache",
   });
   const response = await request.json();
+  console.log(response)
   setData(response)
   setLoading(false)
   return 
