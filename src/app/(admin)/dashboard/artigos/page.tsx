@@ -2,7 +2,7 @@
 import Filter from "@/components/Filter";
 import { Pagination } from "@/components/Pagination";
 import Spinner from "@/components/Spinner";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import {
   Table,
   TableCaption,
@@ -35,15 +35,8 @@ const ArticleHome = () => {
     try {
       //@ts-ignore
       const token = session?.user.token;
-      const articles = await fetch(`${baseURL}articles?page=${page}`, {
-        method: "GET",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const response = await articles.json();
+     
+      const response = await ApiController.getArticles(page,token);
       setArticles(response.articles);
       setTotalPages(response.total);
       setLoading(false);
@@ -97,14 +90,7 @@ const ArticleHome = () => {
 
     if (del.isConfirmed) {
       try {
-        const deletArticle = await fetch(`${baseURL}delet-article`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ id, name }),
-        });
+        await ApiController.deleteArticle(token,name,id)
 
         await Swal.fire(
           `Artigo ${name} deletado com sucesso!!`,
@@ -112,7 +98,7 @@ const ArticleHome = () => {
           "success"
         );
         await getArticles()
-          
+        return
           
       } catch (error) {
         console.log(error);
@@ -242,8 +228,8 @@ const ArticleHome = () => {
                   <Th color={"white"}>Ações</Th>
                 </Tr>
               </Thead>
-              <Tbody>
                 {articles?.map((book: any, index: any) => (
+              <Tbody key={index}>
                   <Tr>
                     <Td>
                       <img
@@ -285,8 +271,8 @@ const ArticleHome = () => {
                       </button>
                     </Td>
                   </Tr>
-                ))}
               </Tbody>
+                ))}
             </Table>
           </TableContainer>
           <div className="flex items-center justify-center my-2">

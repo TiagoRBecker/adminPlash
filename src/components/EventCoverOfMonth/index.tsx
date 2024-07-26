@@ -36,8 +36,7 @@ const Eventes = async () => {
            }
             
           </div>
-        
-          <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 py-5">
+          <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-5">
           
              
           {
@@ -49,10 +48,10 @@ const Eventes = async () => {
             <img
               src={event.cover}
               alt={event.name}
-               className="w-full h-[240px] object-cover "
+               className="w-full h-[240px] object-fill "
             />
 
-            <p className="w-full text-base truncate text-gray-600  px-1 py-2 ">
+            <p className="w-full text-base truncate text-gray-600  px-1 py-2  ">
               {event.name}
             </p>
             <p className="w-full text-base truncate text-white bg-[#14b7a1] px-1 text-center py-2 ">

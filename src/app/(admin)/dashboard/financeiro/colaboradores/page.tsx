@@ -35,6 +35,7 @@ const EmployeeFinance = () => {
       const token = session?.user.token 
       const res = await fetch(`${baseURL}employees?page=${page}`, {
         method: "GET",
+        cache:"no-cache",
         headers:{
 
           Authorization:`Bearer ${token}`
@@ -177,7 +178,7 @@ const EmployeeFinance = () => {
                 <Td>{employee.phone}</Td>
                 <Td>{employee?.magazines?.length}</Td>
 
-                <Td>0</Td>
+                <Td className="text-green-500">{Number(employee.availableForWithdrawal).toLocaleString("pt-br",{style:"currency",currency:"BRL"})}</Td>
                 <Td>
                   <div className="w-full h-full ">
                     <Link href={`/dashboard/financeiro/colaboradores/${employee.id}`}>

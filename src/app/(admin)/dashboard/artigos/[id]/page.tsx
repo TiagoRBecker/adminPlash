@@ -1,7 +1,7 @@
 "use client";
 import Spinner from "@/components/Spinner";
 import React, { useState, useEffect, useRef } from "react";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,7 @@ import { Articles, article } from "@/components/utils/validation";
 import ArticleController from "@/hooks/article"; //Hook responsavel pela logica dos artigos
 import { useSession } from "next-auth/react";
 import TextEditor from "@/components/Editor";
-import dynamic from "next/dynamic";
+
 const ArticleID = ({ params }: { params: { id: string } }) => {
 
    const {data:session,status} = useSession()
@@ -32,43 +32,44 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const selectCat = watch("categoryId");
   const slug = params.id;
-  useEffect(() => {
-    if(status === "authenticated"){
-    ArticleController.getCategories(setCategories, setLoading)
-      .then((cat) => cat)
-      .catch((error) => console.log(error));
-    getArticleById()
-    }
-  }, [status]);
+  
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState<any>("");
   const [content, setContent] = useState("");
   
   const [newAvatar, setNewAvatar] = useState<any>("");
-  const [url, setUrl] = useState("");
+ 
  
 
 
   const  getArticleById =  async  () => {
-    const getArticle = await fetch(`${baseURL}article/${slug}`, {
-      method: "GET",
-      cache:"no-cache",
-      headers:{
-        Authorization: `Bearer ${token}`,
-      }
-    });
-    const response = await getArticle.json();
+   try {
+    const response = await ApiController.getArticle(slug,token);
  
     Object.keys(response).forEach((key: any) => {
       setValue(key, response[key] as any);
     });
     setAvatar(response.cover)
-    setUrl(response.articlepdf)
     setContent(response.description)
     setLoading(false);
   
     return;
+   } catch (error) {
+    console.log(error)
+   }
+ 
+  };
+  const getCategories = async () => {
+    try {
+      const response = await ApiController.getCategories();
+
+      setCategories(response);
+      
+      return;
+    } catch (error) {
+      console.log(error);
+    }
   };
   const clearAvatar = ()=>{
     if(fileInputRef.current){
@@ -90,9 +91,8 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
 
     return;
   };
-  const filterCategory = ArticleController.filterCategory(
-    categories,
-    selectCat
+  const filterCategory = categories.filter(
+    (name: any) => Number(name.id) === Number(selectCat)
   );
 
   const onSubmit = handleSubmit(async (data: any) => {
@@ -119,17 +119,7 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
       try {
         //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
 
-        const updateArticle = await fetch(`${baseURL}update-article/${slug}`, {
-          method: "POST",
-         headers:{
-          Authorization: `Bearer ${token}`,
-        },
-          body: formData,
-        });
-       const res = await updateArticle.json()
-       
-        if (updateArticle.status === 200) {
-          //@ts-ignore
+         await ApiController.updateArticle(slug,token,formData)
           await Swal.fire(
             "Artigo atualizado com sucesso!!",
             "Clica no botão para continuar!",
@@ -138,7 +128,7 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
           router.push("/dashboard/artigos");
 
           return;
-        }
+        
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
@@ -151,6 +141,13 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
       }
     }
   });
+  useEffect(() => {
+    if(status === "authenticated"){
+    
+    getArticleById()
+    getCategories()
+    }
+  }, [status]);
   if (loading) {
     return (
       <section className="w-full h-screen flex items-center justify-center">

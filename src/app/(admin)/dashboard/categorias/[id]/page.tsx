@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import useCategory from "@/hooks/category";
-import { baseURL, url } from "@/components/utils/api";
+import ApiController, { baseURL, url } from "@/components/utils/api";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
@@ -22,43 +22,51 @@ const EditCat = ({ params }: { params: { id: string } }) => {
     }
   }, []);
   const getCategoryById = async () => {
-    const getCategoryById = await fetch(`${url}/category/${slug}`, {
-      method: "GET",
-    });
-    const response = await getCategoryById.json();
-    setEditCategory(response.name);
-
-    setLoading(false);
-
-    return response;
+    try {
+      const response = await ApiController.getCategory(slug);
+      setEditCategory(response.name);
+  
+      setLoading(false);
+       return
+  
+    } catch (error) {
+      console.log(error)
+    }
+   
+   
   };
 
   const handleEditCategory = async (e: any) => {
     e.preventDefault();
-
+    const edit = await Swal.fire({
+      position: "center",
+      title: "Tem certeza?",
+      text: `Você  editar a categoria ${editCategory}?`,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#d55",
+      confirmButtonText: "Adicionar",
+      confirmButtonColor: "#00FF00",
+    });
+    
     try {
-       //@ts-ignore
-       const token = session?.user?.token 
-      const editCat = await fetch(`${baseURL}update-category/${slug}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:`Bearer ${token}`
-        },
-
-        body: JSON.stringify({ slug, editCategory }),
-      });
-       const response = await editCat.json()
+       
+       if(edit.isConfirmed){
+        //@ts-ignore
+        const token = session?.user?.token 
+        await ApiController.updateCategory(slug,token,editCategory)
+       
       
-      if (editCat.status === 200) {
-        await Swal.fire(
-          "Categoria alterada  com sucesso!!",
-          "Clica no botão para continuar!",
-          "success"
-        );
-        router.push("/dashboard/categorias");
-        return;
-      }
+         await Swal.fire(
+           "Categoria alterada  com sucesso!!",
+           "Clica no botão para continuar!",
+           "success"
+         );
+         router.push("/dashboard/categorias");
+         return;
+       }
+       
+      
     } catch (error) {
       console.log(error);
       //Exibe o modal de erro caso exista um

@@ -5,6 +5,7 @@ import { Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr } from "@
 const tableEmployyes = ({employees}:any) => {
    
     return (  
+      <div>
  <TableContainer width={"100%"}>
     <Table variant="simple" fontSize={14}>
       <TableCaption>Colaboradores</TableCaption>
@@ -41,7 +42,8 @@ const tableEmployyes = ({employees}:any) => {
       </Tbody>
         ))}
     </Table>
-  </TableContainer> );
+  </TableContainer> 
+  </div>);
 }
  
 export default tableEmployyes;

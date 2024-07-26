@@ -23,7 +23,7 @@ const Events = () => {
 
       const response = await events.json();
       setData(response);
-      console.log(response);
+      
       return response;
     } catch (error) {}
   };
@@ -106,15 +106,15 @@ const Events = () => {
     <h1 className="w-full text-left text-[24px] font-bold  lg:text-[19px] text-dark-brown tracking-[-.0065em]  mb-4">
     Últimos eventos adicionados
       </h1>
-          <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 py-5">
+          <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-5">
           {data.map((events: any, index: number) => (
             <div className="w-full h-full " key={index}>
               <img
                 src={events.cover}
                 alt={events.name}
-                   className="w-full h-[240px] object-cover "
+                   className="w-full object-cover h-[240px] md:object-fill "
               />
-              <p className="font-bold text-lg">{events.name}</p>
+              <p className="font-bold text-sm py-1 truncate">{events.name}</p>
 
               
               <p>{events.city}</p>

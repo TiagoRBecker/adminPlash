@@ -1,6 +1,6 @@
 "use client";
 import Spinner from "@/components/Spinner";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -29,14 +29,8 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
     try {
       //@ts-ignore
       const token = session?.user.token;
-      const getDvl = await fetch(`${baseURL}dvl/${slug}`, {
-        method: "GET",
-        cache: "no-cache",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const response = await getDvl.json();
+
+      const response = await ApiController.getDVLName(slug, token);
 
       setDvl(response);
       setLoading(false);
@@ -49,16 +43,13 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
 
   const updateDvl = async (e: any) => {
     e.preventDefault();
- 
-  
-    e.preventDefault();
+
     setErrorText(false);
     if (Number(pay) === 0) {
       setErrorText(true);
       return;
     }
     if (pay > dvl.paidOut) {
-       
       Swal.fire({
         icon: "error",
         title: "Erro",
@@ -66,70 +57,40 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
       });
       return;
     }
-    try {
-      const payCommission = await Swal.fire({
-        position: "center",
-        title: "Tem certeza?",
-        text: `Você deseja pagar as comissões  da revista ${dvl.name}?`,
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-        cancelButtonColor: "#d55",
-        confirmButtonText: "Adicionar",
-        confirmButtonColor: "#00FF00",
-      });
-      if (payCommission.isConfirmed) {
-        //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
+
+    const payCommission = await Swal.fire({
+      position: "center",
+      title: "Tem certeza?",
+      text: `Você deseja pagar as comissões  da revista ${dvl.name}?`,
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#d55",
+      confirmButtonText: "Adicionar",
+      confirmButtonColor: "#00FF00",
+    });
+    if (payCommission.isConfirmed) {
+      //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
+      //@ts-ignore
+      try {
         //@ts-ignore
         const token = session?.user.token;
-        const update = await fetch(
-          `${baseURL}dvl/${slug}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-
-            body: JSON.stringify({ pay,price:dvl.price }),
-          }
-        );
-        const response = await update.json();
-      
-        if (update.status === 403) {
-          
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Seu token de segurança expirou. Faça Login Novamente ",
-            footer: `<a href="/">Deseja fazer Login?</a>`
-          });
-          return
-          
-        }
+         await ApiController.updateDvl(slug, token, pay);
         await Swal.fire(
-          `Numero de dvls atualizado com sucesso ${response.count}! `,
+          //@ts-ignore
+          `Todos as reivistas com o nome ${dvl.name} foram pagas com sucesso! `,
           "Clica no botão para continuar!",
           "success"
         );
         router.push("/dashboard/dvl");
-        return;
+      } catch (error) {
+        await Swal.fire(
+          //@ts-ignore
+          `Erro ao tentar atualizaro dvl ! `,
+          "Clica no botão para continuar!",
+          "error"
+        );
       }
-    } catch (error) {
-      console.log(error);
-      //Exibe o modal de erro caso exista um
-      await Swal.fire(
-        "Erro ao criar o evento!",
-        "Clica no botão para continuar!",
-        "error"
-      );
     }
-    
-   
-    
-   
-
-   
-    
   };
 
   if (loading) {
@@ -143,15 +104,17 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
     <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <div className="w-full ">
         <h1 className=" text-gray-500 text-2xl mb-8 text-center">
-          Pagar Divisão de Lucro para a revista {dvl.name}
+          Pagar Divisão de Lucro para a revista {dvl?.name}
         </h1>
 
         <div className="w-full h-full flex flex-col md:flex-row md:w-[40%] mx-auto md:h-[500px] gap-3 ">
           <div className="w-full md:w-[70%]">
-            <img src={dvl.picture} alt="" className="w-full h-full" />
+            <img src={dvl?.picture} alt="" className="w-full h-full" />
+            <span>Data da compra {new Date(dvl.createDate).toLocaleString("pt-br")}</span>
           </div>
           <div className="w-full md:w-[30%] flex flex-col gap-3">
             <h1 className="uppercase font-bold">{dvl?.name}</h1>
+           
             <span>
               Total do DVL{" "}
               {Number(price * 2).toLocaleString("pt-br", {
@@ -173,6 +136,7 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
                 currency: "BRL",
               })}
             </span>
+            
           </div>
         </div>
 
@@ -183,17 +147,17 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
           <div className="w-full flex flex-col gap-2">
             <label htmlFor="">Pagar Valor </label>
             <NumericFormat
-        value={Number(pay)}
-        onValueChange={(values) => setPay(Number(values.value as any))}
-        displayType={"input"}
-        thousandSeparator={true}
-        prefix={"R$ "}
-        decimalSeparator={"."}
-        decimalScale={2}
-        fixedDecimalScale={true}
-         className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
-      />
-        {errorText && (
+              value={Number(pay)}
+              onValueChange={(values) => setPay(Number(values.value as any))}
+              displayType={"input"}
+              thousandSeparator={true}
+              prefix={"R$ "}
+              decimalSeparator={"."}
+              decimalScale={2}
+              fixedDecimalScale={true}
+              className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
+            />
+            {errorText && (
               <p className="text-sm text-red-600">
                 Prrencha o campo com o valor corretamente!
               </p>

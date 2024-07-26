@@ -33,43 +33,43 @@ const TimerComponent = ({ eventTimestamp }:any) => {
     const formattedMinutes = String(minutes).padStart(2, "0");
     const formattedSeconds = String(seconds).padStart(2, "0");
     return (
-      <div className="flex flex-col  gap-2 ">
-        <div className="flex  gap-2">
+      <div className="w-full flex flex-col  gap-2 ">
+        <div className="flex items-center justify-center gap-2">
           <div className="flex flex-col items-center justify-center">
           <div className="flex items-center">
-            <p className="text-[28px] flex items-center justify-center">
+            <p className="text-[14px] flex items-center justify-center">
               {formattedDays}
             </p>
             <p>:</p>
           </div>
-          <p className="text-[11px]">Dias</p>
+          <p className="text-[14px]">Dias</p>
           </div>
           <div className="flex flex-col items-center justify-center">
           <div className="flex items-center">
-            <p className="text-[28px] flex items-center justify-center">
+            <p className="text-[14px] flex items-center justify-center">
               {formattedHours}
             </p>
             <p>:</p>
           </div>
-          <p className="text-[11px]">Horas</p>
+          <p className="text-[14px]">Horas</p>
           </div>
           <div className="flex flex-col items-center justify-center">
           <div className="flex items-center">
-            <p className="text-[28px] flex items-center justify-center">
+            <p className="text-[14px] flex items-center justify-center">
               {formattedMinutes}
             </p>
             <p>:</p>
           </div>
-          <p className="text-[11px]">Min</p>
+          <p className="text-[14px]">Min</p>
           </div>
           <div className="flex flex-col items-center justify-center">
           <div className="flex items-center">
-            <p className="text-[28px] flex items-center justify-center">
+            <p className="text-[14px] flex items-center justify-center">
               {formattedSeconds}
             </p>
             <p>:</p>
           </div>
-          <p className="text-[11px]">Sec</p>
+          <p className="text-[14px]">Sec</p>
           </div>
          
     

@@ -27,7 +27,10 @@ const lastEmployees = async  () => {
         <h1 className="w-full text-left text-[24px] font-bold  lg:text-[19px] text-dark-brown tracking-[-.0065em]  mb-4">
         Últimos Colaboradores adicionados
       </h1>
+      <div>
       <TableEmployyes employees={data}/>
+      </div>
+      
     </div>  );
 }
  

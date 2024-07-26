@@ -2,16 +2,14 @@
 import { useEffect, useRef, useState } from "react";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
 import { useSession } from "next-auth/react";
 
-
-
 const Banner = () => {
-  const {data:session} = useSession()
+  const { data: session } = useSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
@@ -20,10 +18,18 @@ const Banner = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-   const formData = new FormData()
-   formData.append("banner", cover)
-   formData.append("name", name)
- 
+    if (cover === "") {
+      await Swal.fire(
+        "Necessário escolher um banner !",
+        "Clica no botão para continuar!",
+        "error"
+      );
+      return;
+    }
+    const formData = new FormData();
+    formData.append("banner", cover);
+    formData.append("name", name);
+
     const addEvent = await Swal.fire({
       position: "center",
       title: "Tem certeza?",
@@ -34,35 +40,25 @@ const Banner = () => {
       confirmButtonText: "Adicionar",
       confirmButtonColor: "#00FF00",
       customClass: {
-        popup: 'custom-swal-popup' // Classe personalizada para o popup
-      }
+        popup: "custom-swal-popup", // Classe personalizada para o popup
+      },
     });
-    
+
     if (addEvent.isConfirmed) {
       try {
-              //@ts-ignore
-          const token = session?.user.token 
+        //@ts-ignore
+        const token = session?.user.token;
 
-        const addArticle = await fetch(`${baseURL}create-banners`, {
-          method: "POST",
-          headers: {
-           
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-        const response = await addArticle.json()
-        console.log(response)
-        if (addArticle.status === 200) {
-          await Swal.fire(
-            "Banner criado com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
+        await ApiController.createBanner(token, formData);
 
-          router.push("/dashboard/banners");
-          return;
-        }
+        Swal.fire(
+          "Banner criado com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
+
+        router.push("/dashboard/banners");
+        return;
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
@@ -94,7 +90,7 @@ const Banner = () => {
   };
 
   return (
-    <section className="w-full h-screen mt-16">
+    <section className="container mx-auto h-full  flex  flex-col items-center  px-4  gap-4  bg-white ">
       <form
         className="w-[80%] mx-auto flex flex-col gap-4   rounded-md  py-2 px-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)] "
         encType="multipart/form-data"

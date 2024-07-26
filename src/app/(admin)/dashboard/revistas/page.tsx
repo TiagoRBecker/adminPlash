@@ -4,7 +4,7 @@ import Link from "next/link";
 import Spinner from "@/components/Spinner";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import { useSearchParams } from "next/navigation";
 import {
   Table,
@@ -46,27 +46,18 @@ const Magazines = () => {
   }, [status, page]);
 
   const getMagazines = async () => {
-    //@ts-ignore
- try {
-  const currentPage = page || 1;
-  const magazines = await fetch(`${baseURL}magazines?page=${currentPage}`, {
-    method: "GET",
-    cache: "no-cache",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  const response = await magazines.json();
-  console.log(response)
-  setMagazine(response.magazine);
-  setTotalPages(response.total);
-  setLoading(false);
- } catch (error) {
-   console.log(error)
+    try {
+      const response = await ApiController.getMagazines(page as string,token)
+      setMagazine(response.magazine);
+      setTotalPages(response.total);
+      setLoading(false);
+    } catch (error) {
+      console.log(error)
+    }
+
+ 
  }
    
-    return;
-  };
   const handlFilter = async (filterValues?: any) => {
     setLoading(true);
     //@ts-ignore
@@ -111,33 +102,21 @@ const Magazines = () => {
     });
 
     if (del.isConfirmed) {
-      try {
-        const deletArticle = await fetch(`${baseURL}delet-magazine`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ id, name }),
-        });
-//@ts-ignore
-        await Swal.fire(
-          `Revista ${name} deletado com sucesso!!`,
-          "Clica no botão para continuar!",
-          "success"
-        );
-        await getMagazines();
-      } catch (error) {
-        console.log(error);
-        
-        //@ts-ignore
-        //Exibe o modal de erro caso exista um
-        await Swal.fire(
-          "Erro ao deletar o Revista!",
-          "Clica no botão para continuar!",
-          "error"
-        );
-      }
+     try {
+       await ApiController.deleteMagazines(id,name,token)
+       await Swal.fire(
+        `Revista ${name} deletado com sucesso!!`,
+        "Clica no botão para continuar!",
+        "success"
+      );
+      await getMagazines();
+     } catch (error) {
+      await Swal.fire(
+        "Erro ao deletar o Revista!",
+        "Clica no botão para continuar!",
+        "error"
+      );
+     }
     }
   };
   const labels = {

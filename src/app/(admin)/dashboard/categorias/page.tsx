@@ -2,7 +2,7 @@
 import Header from "@/components/Header";
 import Spinner from "@/components/Spinner";
 import { Categories } from "@/components/types";
-import { baseURL, url } from "@/components/utils/api";
+import ApiController, { baseURL, url } from "@/components/utils/api";
 import {
   Table,
   TableCaption,
@@ -26,19 +26,16 @@ const CategoriesC = () => {
   const [loading, setLoading] = useState(true);
 
   const getCategories = async () => {
-    const get = await fetch(`${url}/categories`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (get.status === 200) {
-      const response = await get.json();
+    try {
+      const response = await ApiController.getCategories();
 
       setCategorie(response);
       setLoading(false);
+    } catch (error) {
+      console.log(error)
     }
+      
+    
     return;
   };
 
@@ -58,15 +55,7 @@ const CategoriesC = () => {
         //@ts-ignore
         const token = session?.user.token;
         //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
-        const deletCat = await fetch(`${baseURL}delet-category`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ id }),
-        });
-        if (deletCat.status === 200) {
+         await ApiController.deleteCategories(token,id)
           await Swal.fire(
             "Categoria deletada com sucesso!!",
             "Clica no botão para continuar!",
@@ -74,7 +63,7 @@ const CategoriesC = () => {
           );
           await getCategories();
           return;
-        }
+        
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um

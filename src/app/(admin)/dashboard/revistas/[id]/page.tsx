@@ -1,9 +1,9 @@
 "use client";
 import Spinner from "@/components/Spinner";
 import { useState, useEffect, useRef } from "react";
-import { Viewer, Worker } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import { baseURL, url } from "@/components/utils/api";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import ApiController, { baseURL, url } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
@@ -32,20 +32,23 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
   const fileInputRef = useRef(null);
   //@ts-ignore
   const token = session?.user.token;
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState<any>("");
 
-  const [pdf, setPdf] = useState("");
+  const [url, setUrl] = useState("");
+  const [urlPreview, setUrlPreview] = useState("");
   const [price, setPrice] = useState(0);
   const [pdfViewer, setPdfViewer] = useState("");
   const [newAvatar, setNewAvatar] = useState<any>("");
-  const [newPDF, setNewPDF] = useState<any>("");
+
   const [employees, setEmployees] = useState([]);
   const [employeesID, setEmployeesID] = useState<any>([]);
   const [errorPicture, setErrorPicture] = useState(false);
   const [employeesMagazine, setEmployeesMagazine] = useState([]);
   const [selectEmployee, setSelectEmployee] = useState("1");
+  const [loadingPdf, setLoadingPdf] = useState(false);
   const name = getValues("name");
   const id = watch("employeeId");
   const router = useRouter();
@@ -61,14 +64,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
   const getEmployees = async () => {
     try {
       //@ts-ignore
-      const token = session?.user.token;
-      const employeeResponse = await fetch(`${baseURL}employees`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const response = await employeeResponse.json();
+       const response = await ApiController.getEmployees(token)
 
       setEmployees(response.employee);
     } catch (error) {
@@ -88,21 +84,30 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
 
     return;
   };
-  const uploadPdf = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const uploadPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoadingPdf(true);
+    const formData = new FormData();
     const files = e.target.files as any;
+
     if (files) {
-      // Se um arquivo foi fornecido, atualize a URL
-      setNewPDF(files[0]);
-      setLoading(false);
+      try {
+        //@ts-ignore
+        const token: any = session?.user?.token;
+        formData.append("pdf", files[0]);
+        const upload = await ApiController.UploadPdf(token, formData);
+        setUrl(upload.pdf);
+        setUrlPreview(upload.url);
+        setLoadingPdf(false);
+        return;
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   const getCategories = async () => {
     try {
-      const getCat = await fetch(`${url}/categories`, {
-        method: "GET",
-      });
-      const response = await getCat.json();
-     console.log(response)
+     const response = await ApiController.getCategories()
+     
       setCategories(response);
       return;
     } catch (error) {
@@ -110,15 +115,10 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
     }
   };
   const getByMagazine = async () => {
+    setLoading(true)
     try {
-      const getMagazine = await fetch(`${baseURL}magazine/${slug}`, {
-        method: "GET",
-        cache: "no-cache",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const response = await getMagazine.json();
+      
+      const response = await ApiController.getMagazine(slug,token)
 
       Object.keys(response.magazine).forEach((key: any) => {
         setValue(key, response.magazine[key] as any);
@@ -127,8 +127,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
 
       setEmployeesMagazine(response.magazine.employees);
       setAvatar(response.magazine.cover);
-      setPdf(response.magazine.magazine_pdf);
-      setPdfViewer(response.url);
+      setUrl(response.magazine.magazine_pdf);
+      setUrlPreview(response.url);
       setLoading(false);
 
       return;
@@ -147,9 +147,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
 
   const clearPdf = () => {
     //@ts-ignore
-    setPdf("");
-    setNewPDF("");
-    setPdfViewer("");
+    setUrl("");
+    setUrlPreview("");
   };
   //Remove o colaborador da revista
   const removeEmployee = async (id: string) => {
@@ -165,27 +164,15 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
     });
     if (del.isConfirmed) {
       try {
-        const removeEmployeeResponse = await fetch(
-          `${baseURL}removeEmplooyeMagazine`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ slug, id }),
-          }
-        );
+        await ApiController.removeEmployee(token,slug,id)
 
-        if (removeEmployeeResponse.status === 200) {
-          await Swal.fire(
-            "Colaborador removido com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
-          await getByMagazine();
-          return;
-        }
+        await Swal.fire(
+          "Colaborador removido com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
+        await getByMagazine();
+        
       } catch (error) {
         console.log(error);
         await Swal.fire(
@@ -200,9 +187,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
   const onSubmit = handleSubmit(async (data: any) => {
     const formData = new FormData();
     formData.append("cover", avatar);
-    formData.append("pdf", pdf);
+    formData.append("pdf", url);
     formData.append("newCover", newAvatar);
-    formData.append("newPdf", newPDF);
     formData.append("price", price as any);
     formData.append("employes", JSON.stringify(employeesID));
     for (const key in data) {
@@ -222,29 +208,18 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
       try {
         //Apos concluido com sucesso exibe  o modal de revista atualizada e redireciona para rota de exibição das revistas
 
-        const updateArticle = await fetch(`${baseURL}update-magazine/${slug}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-        const res = await updateArticle.json();
-      
-        if (updateArticle.status === 200) {
-          await Swal.fire(
-            "Revista atualizada com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
-          router.push("/dashboard/revistas");
-
-          return;
-        }
+         await ApiController.updateMagazine(formData,token, slug)
+        Swal.fire(
+          "Revista atualizada com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
+        router.push("/dashboard/revistas");
+       
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
-        await Swal.fire(
+         Swal.fire(
           "Erro ao atualizar a revista!",
           "Clica no botão para continuar!",
           "error"
@@ -254,9 +229,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
   });
   //@ts-ignore
   const filterEmployee = employees.filter(
-    (emp: any) => !employeesMagazine.some(
-      (mag: any) => Number(mag.id) === Number(emp.id)
-    )
+    (emp: any) =>
+      !employeesMagazine.some((mag: any) => Number(mag.id) === Number(emp.id))
   );
 
   //Loading pagina
@@ -267,10 +241,10 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
       </section>
     );
   }
-
+ 
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white ">
-       <form
+      <form
         className="w-full h-full mt-16 md:w-[80%] mx-auto   rounded-md  py-2 px-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)] "
         encType="multipart/form-data"
         onSubmit={onSubmit}
@@ -280,7 +254,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
           Editar Revista {name}
         </h1>
         <div className="flex-col  md:flex md:flex-row">
-        <div className="w-full md:w-[65%] flex flex-col gap-1  px-4 py-4">
+          <div className="w-full md:w-[65%] flex flex-col gap-1  px-4 py-4">
             <div className="flex flex-col gap-1">
               <label htmlFor="">Autor Revista</label>
               <input
@@ -381,7 +355,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
                 {errors.categoryId.message as any}
               </p>
             )}
-           <div className="w-full flex-col md:flex md:flex-row  items-center justify-between gap-2">
+            <div className="w-full flex-col md:flex md:flex-row  items-center justify-between gap-2">
               <p className="text-left w-full">Modelo</p>
               <div className="flex w-full gap-2">
                 <select
@@ -401,7 +375,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
               </p>
             )}
             {filterEmployee && filterEmployee.length > 0 && (
-            <div className="">
+              <div className="">
                 <div className="w-full flex-col md:flex md:flex-row  items-center justify-between gap-2">
                   <p className="text-left w-full">
                     Relacionar colaborador a Revista
@@ -594,64 +568,66 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
               <div className="w-full h-full">
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
-                  <div className="mt4" style={{ height: "200px" }}>
-                    {pdfViewer || newPDF ? (
-                      <div className="w-full h-52 relative">
-                        <Viewer
-                          fileUrl={
-                            newPDF ? URL.createObjectURL(newPDF) : pdfViewer
-                          }
-                        />
-                        <button
-                          onClick={clearPdf}
-                          className="absolute top-2 right-4"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6 text-red-500"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className=" w-full h-52 bg-[#14b7a1] rounded-md flex items-center justify-center">
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          id="pdf_file"
-                          hidden
-                          onChange={uploadPdf}
-                        />
-                        <label htmlFor="pdf_file" className="cursor-pointer">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-12 h-12 text-white"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                            />
-                          </svg>
-                        </label>
-                      </div>
-                    )}
+                {loadingPdf ? (
+                  <div className="">
+                    <p>Aguarde ...</p>
                   </div>
-                </Worker>
+                ) : (
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
+                    <div className="mt4" style={{ height: "200px" }}>
+                      {urlPreview ? (
+                        <div className="w-full h-52 relative">
+                          <Viewer fileUrl={urlPreview} />
+                          <button
+                            onClick={clearPdf}
+                            className="absolute top-2 right-4"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6 text-red-500"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className=" w-full h-52 bg-[#14b7a1] rounded-md flex items-center justify-center">
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            id="pdf_file"
+                            hidden
+                            onChange={uploadPdf}
+                          />
+                          <label htmlFor="pdf_file" className="cursor-pointer">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-12 h-12 text-white"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                              />
+                            </svg>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </Worker>
+                )}
               </div>
             </div>
             {errorPicture && (

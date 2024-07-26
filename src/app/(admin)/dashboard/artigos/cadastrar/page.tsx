@@ -2,7 +2,7 @@
 import Spinner from "@/components/Spinner";
 import React, { useState, useEffect, useRef } from "react";
 
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
@@ -32,41 +32,55 @@ const Article = () => {
   });
   const selectCat = watch("categoryId");
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState<any>("");
   const [errorPicture, setErrorPicture] = useState(false);
   const [content, setContent] = useState("");
   const router = useRouter();
   useEffect(() => {
-    ArticleController.getCategories(setCategories, setLoading)
-      .then((cat) => cat)
-      .catch((error) => console.log(error));
+    getCategories();
   }, []);
+  const getCategories = async () => {
+    try {
+      const response = await ApiController.getCategories();
 
+      setCategories(response);
+      
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // Filtra as revistas por categorias
-  const filterCategory = ArticleController.filterCategory(
-    categories,
-    selectCat
-  );
 
-const clearAvatar = ()=>{
-  if(fileInputRef.current){
-    fileInputRef.current.value = "";
-  }
-  setAvatar("");
-  return
-}
+  const filterCategory = categories.filter(
+    (name: any) => Number(name.id) === Number(selectCat)
+  );
+  const upload =(e: React.ChangeEvent<HTMLInputElement>)=>{
+    setLoading(true);
+    const files = e.target.files as any;
+    if (files) {
+      // Se um arquivo foi fornecido, atualize a URL
+      setAvatar(files[0]);
+      setLoading(false);
+    }
+
+    return;
+  };
+  const clearAvatar = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setAvatar("");
+    return;
+  };
 
   // Evia os dados para backend
   const onSubmit = handleSubmit(async (data: any) => {
- 
-    
-   
-
     const formData = new FormData();
-     formData.append("description",content)
+    formData.append("description", content);
     formData.append("cover_file", avatar);
- 
+
     // Adiciona dentro do formdata os valores do data do react hook forms
     for (const key in data) {
       formData.append(key, data[key] as any);
@@ -85,25 +99,16 @@ const clearAvatar = ()=>{
       try {
         //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
 
-        const addArticle = await fetch(`${baseURL}create-article`, {
-          method: "POST",
-          headers:{
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-        const res = await addArticle.json()
-        console.log(res)
-        if (addArticle.status === 200) {
-          await Swal.fire(
-            "Artigo criado com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
-          
-          router.push("/dashboard/artigos");
-          return;
-        }
+        await ApiController.createArticle(formData, token);
+
+        await Swal.fire(
+          "Artigo criado com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
+
+        router.push("/dashboard/artigos");
+        return;
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
@@ -113,12 +118,9 @@ const clearAvatar = ()=>{
           "error"
         );
       }
-      
     }
-
-   
   });
-   
+
   if (loading) {
     return (
       <section className="w-full h-screen flex items-center justify-center">
@@ -258,9 +260,7 @@ const clearAvatar = ()=>{
                       hidden
                       id="file"
                       ref={fileInputRef}
-                      onChange={(e) => {
-                        ArticleController.upload(e, setLoading, setAvatar);
-                      }}
+                      onChange={(e) => {upload(e)}}
                     />
                     {loading ? (
                       <Spinner />
@@ -328,9 +328,7 @@ const clearAvatar = ()=>{
               </div>
             </div>
             {errorPicture && (
-              <p className="text-red-600 text-sm">
-                Adicione  Imagem
-              </p>
+              <p className="text-red-600 text-sm">Adicione Imagem</p>
             )}
           </div>
         </div>

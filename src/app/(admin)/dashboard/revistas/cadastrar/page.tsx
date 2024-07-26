@@ -3,7 +3,7 @@ import Spinner from "@/components/Spinner";
 import { useState, useEffect, useRef } from "react";
 import { Viewer, Worker } from "@react-pdf-viewer/core/lib";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
@@ -28,10 +28,9 @@ const Add_Magazine = () => {
     mode: "all",
     resolver: zodResolver(magazine),
   });
-  const { data: session ,status} = useSession();
-
-
-
+  const { data: session, status } = useSession();
+  //@ts-ignore
+  const token = session?.user.token;
   const id = watch("employeeId");
   const [categories, setCategories] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -39,44 +38,73 @@ const Add_Magazine = () => {
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState<any>("");
   const [url, setUrl] = useState("");
-  const [price, setPrice] = useState(null)
+  const [urlPreview, seturlPreview] = useState("");
+  const [price, setPrice] = useState(0);
   const [errorPicture, setErrorPicture] = useState(false);
+  const [loadingPdf, setLoadingPdf] = useState(false);
+
   useEffect(() => {
-    MagazineController.getCategories(setCategories)
-      .then((emp) => emp)
-      .catch((error) => console.log(error));
-      if(status === "authenticated"){
-        getEmployees()
-        return
-      }
+   
+    if (status === "authenticated") {
+  
+       getEmployees()
+       getCategories()
+      return
+     }  
+
+      
     
   }, [status]);
-  const  getEmployees = async()=> {
-    
-    //@ts-ignore
-    const token = session?.user.token
-    const employeeResponse = await fetch(`${baseURL}employees`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const response = await employeeResponse.json();
- 
-    setEmployees(response.employee);
-    return;
-  }
+  const getCategories = async () => {
+    try {
+     const response = await ApiController.getCategories()
+     
+      setCategories(response);
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getEmployees = async () => {
+    try {
+      //@ts-ignore
+       const response = await ApiController.getEmployees(token)
+
+      setEmployees(response.employee);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const uploadPdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoadingPdf(true);
+    const formData = new FormData();
+    const files = e.target.files as any;
+
+    if (files) {
+      try {
+        //@ts-ignore
+        const token: any = session?.user?.token;
+        formData.append("pdf", files[0]);
+        const upload = await ApiController.UploadPdf(token, formData);
+        setUrl(upload.pdf);
+        seturlPreview(upload.url);
+        setLoadingPdf(false);
+        return;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   const onSubmit = handleSubmit(async (data: any) => {
-  
-    if (avatar === "" || url === "" || price === null) {
+    if (avatar === "" || urlPreview === "" || price === null) {
       setErrorPicture(true);
       return;
     }
 
     const formData = new FormData();
     formData.append("cover_file", avatar);
-    formData.append("pdf_file", url);
+    formData.append("pdf", url);
     //@ts-ignore
     formData.append("price", price);
     formData.append("employes", JSON.stringify(employeesID));
@@ -96,27 +124,15 @@ const Add_Magazine = () => {
     });
     if (magazineAdd.isConfirmed) {
       try {
-        //Adiciona a categoria e apos exibe  um modal Categoria adicionada com sucesso!
-        //@ts-ignore
-        const token: any = session?.user?.token;
-        const createMagazine = await fetch(`${baseURL}create-magazine`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
+        await ApiController.createMagazine(formData, token);
+        await Swal.fire(
+          "Revista adicionada com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
 
-        if (createMagazine.status === 200) {
-          await Swal.fire(
-            "Revista adicionada com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
-
-          router.push("/dashboard/revistas");
-          return;
-        }
+        router.push("/dashboard/revistas");
+        return;
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
@@ -127,15 +143,16 @@ const Add_Magazine = () => {
         );
       }
     }
-      
   });
   const clearAvatar = (setAvatar: any) => {
-    if(fileInputRef.current){
+    if (fileInputRef.current) {
       //@ts-ignore
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
     setAvatar("");
-  }
+  };
+   console.log(employees)
+
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white ">
       <form
@@ -213,11 +230,13 @@ const Add_Magazine = () => {
             <div className="flex flex-col gap-1">
               <label htmlFor="">Preço</label>
               <NumericFormat
-              value={Number(price)}
-               //@ts-ignore
-              onValueChange={(values:any)=>{setPrice(Number(values.value))}}
-                   className="w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
-               placeholder="Insira o preço"
+                value={Number(price)}
+                //@ts-ignore
+                onValueChange={(values: any) => {
+                  setPrice(Number(values.value));
+                }}
+                className="w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
+                placeholder="Insira o preço"
                 displayType={"input"}
                 thousandSeparator={true}
                 prefix={"R$ "}
@@ -225,13 +244,12 @@ const Add_Magazine = () => {
                 decimalScale={2}
                 fixedDecimalScale={true}
               />
-             {errorPicture && (
-              <p className="text-red-600 text-sm">
-                Insira o preço da revista
-              </p>
-            )}
+              {errorPicture && (
+                <p className="text-red-600 text-sm">
+                  Insira o preço da revista
+                </p>
+              )}
             </div>
-           
 
             <div className="w-full flex-col md:flex md:flex-row  items-center justify-between gap-2">
               <p className="text-left w-full">Categorias Revista</p>
@@ -240,11 +258,12 @@ const Add_Magazine = () => {
                 {...register("categoryId")}
               >
                 <option value="">Selecionar</option>
-                { categories && categories.map((cat: any, index: any) => (
-                  <option key={index} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
+                {categories &&
+                  categories.map((cat: any, index: any) => (
+                    <option key={index} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
               </select>
             </div>
             {errors.categoryId && (
@@ -279,11 +298,12 @@ const Add_Magazine = () => {
                   {...register("employeeId")}
                 >
                   <option value="">Selecionar</option>
-                  { employees && employees?.map((employee: any, index: any) => (
-                    <option key={index} value={employee.id}>
-                      {employee.name}
-                    </option>
-                  ))}
+                  {employees &&
+                    employees?.map((employee: any, index: any) => (
+                      <option key={index} value={employee.id}>
+                        {employee.name}
+                      </option>
+                    ))}
                 </select>
                 <button
                   type="button"
@@ -420,64 +440,68 @@ const Add_Magazine = () => {
                 </div>
               </div>
               <div className="w-full h-full">
-                <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
-                  <div className="mt4">
-                    {url ? (
-                      <div className="w-full h-36 relative">
-                        <Viewer fileUrl={URL.createObjectURL(url as any)} />
-                        <button
-                          onClick={() => {
-                            MagazineController.clearPdf(setUrl);
-                          }}
-                          className="absolute top-2 right-4"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6 text-red-500"
+                {loadingPdf ? (
+                  <p>Aguarde ...</p>
+                ) : (
+                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
+                    <div className="mt4">
+                      {url ? (
+                        <div className="w-full h-36 relative">
+                          <Viewer fileUrl={urlPreview} />
+                          <button
+                            onClick={() => {
+                              MagazineController.clearPdf(setUrl);
+                            }}
+                            className="absolute top-2 right-4"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className=" w-full h-36 bg-[#14b7a1] rounded-md flex items-center justify-center">
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          id="pdf_file"
-                          hidden
-                          onChange={(e) => {
-                            MagazineController.uploadPdf(e, setUrl, setLoading);
-                          }}
-                        />
-                        <label htmlFor="pdf_file" className="cursor-pointer">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-12 h-12 text-white"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                            />
-                          </svg>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-                </Worker>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6 text-red-500"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className=" w-full h-36 bg-[#14b7a1] rounded-md flex items-center justify-center">
+                          <input
+                            type="file"
+                            accept=".pdf"
+                            id="pdf_file"
+                            hidden
+                            onChange={(e) => {
+                              uploadPdf(e);
+                            }}
+                          />
+                          <label htmlFor="pdf_file" className="cursor-pointer">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-12 h-12 text-white"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                              />
+                            </svg>
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  </Worker>
+                )}
               </div>
             </div>
             {errorPicture && (

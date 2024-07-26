@@ -1,6 +1,6 @@
 "use client"
 import Spinner from "@/components/Spinner";
-import { baseURL, url } from "@/components/utils/api";
+import ApiController, { baseURL, url } from "@/components/utils/api";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
@@ -21,17 +21,19 @@ const[loading, setLoading] = useState(true)
 useEffect(()=>{getBanner()},[])
 const {data:session} = useSession()
 const getBanner = async () => {
-  const request = await fetch(`${url}/banners`, {
-    method: "GET",
-    cache: "no-cache",
-  });
-  const response = await request.json();
-  console.log(response)
-  setData(response)
-  setLoading(false)
+  try {
+    const response = await ApiController.getBanners()
+    
+ 
+    setData(response)
+    setLoading(false)
+  } catch (error) {
+    console.log(error)
+  }
+  
   return 
 };
-const deletBanner = async (id:number,name:string) => {
+const deletBanner = async (id:any,name:string) => {
 
  const del = await Swal.fire({
    position: "center",
@@ -47,20 +49,10 @@ const deletBanner = async (id:number,name:string) => {
    try {
       //@ts-ignore
       const token = session?.user.token 
-     const deletBanner = await fetch(
-       `${baseURL}delet-banners`,
-       {
-         method: "DELETE",
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${token}`,
-         },
-         body: JSON.stringify({id}),
-       }
-     );
-        const response = await deletBanner.json()
-       
-     if (deletBanner.status === 200) {
+     
+       await ApiController.deleteBanner(id,token)
+
+    
        await Swal.fire(
        
          "Banner deletado com sucesso!!",
@@ -70,7 +62,7 @@ const deletBanner = async (id:number,name:string) => {
        await getBanner()
        
        return;
-     }
+     
    } catch (error) {
      console.log(error);
      await Swal.fire(
@@ -90,7 +82,7 @@ if(loading){
 }
   return (
   
-    <section className="w-full h-full mt-20 flex  flex-col items-center px-4">
+    <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <div className="w-full flex flex-col md:flex-row items-center justify-between ">
       <h1 className="uppercase text-gray-400">Banners Cadastrados </h1>
          <Link href={"/dashboard/banners/add_banner"} className="text-white font-bold">

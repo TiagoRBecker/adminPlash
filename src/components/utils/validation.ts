@@ -71,6 +71,7 @@ export const magazine = z.object({
     },
     { message: "Selecione uma opção válida" }
   ),
+ 
   
 });
 

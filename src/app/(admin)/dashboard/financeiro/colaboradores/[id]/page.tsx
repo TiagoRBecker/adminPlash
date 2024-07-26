@@ -33,6 +33,7 @@ const EmployeeId = ({ params }: { params: { id: string } }) => {
     const token = session?.user.token;
     const get = await fetch(`${baseURL}employee/${slug}`, {
       method: "GET",
+      cache:"no-cache",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -69,8 +70,7 @@ const EmployeeId = ({ params }: { params: { id: string } }) => {
       setCurrentPage(currentPage + 1);
     }
   };
-  
-  
+
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <div className="w-full h-full mt-12 gap-3 flex-col-reverse md:flex md:flex-row justify-center md:gap-3">
@@ -114,15 +114,15 @@ const EmployeeId = ({ params }: { params: { id: string } }) => {
                         </p>
                       </Td>
                       <Td>
-                        <p className="text-green-500">
-                          { Number(dvl?.paidOut).toLocaleString("pt-br", {
+                        <p className="text-red-500">
+                          {Number(dvl?.paidOut).toLocaleString("pt-br", {
                             style: "currency",
                             currency: "BRL",
-                        })}
+                          })}
                         </p>
                       </Td>
                       <Td>
-                        <p className="text-red-500">
+                        <p className="text-green-500">
                           {Number(dvl.toReceive).toLocaleString("pt-br", {
                             style: "currency",
                             currency: "BRL",
@@ -130,14 +130,11 @@ const EmployeeId = ({ params }: { params: { id: string } }) => {
                         </p>
                       </Td>
                       <Td>
-                        {dvl.toReceive === dvl.price ? (
+                        {dvl.paidOut === 0 ? (
                           <p className="text-red-500">Finalizado</p>
                         ) : (
                           <Link
-                            href={{
-                              pathname: `/dashboard/financeiro/colaboradores/${employee.id}/${dvl.id}`,
-                              query: { commission: employee.commission },
-                            }}
+                            href={`/dashboard/financeiro/colaboradores/${employee.id}/${dvl.id}`}
                           >
                             <p className="w-10 h-10 flex items-center justify-center rounded-full bg-green-500">
                               <svg
@@ -180,7 +177,6 @@ const EmployeeId = ({ params }: { params: { id: string } }) => {
               Próximo
             </button>
           </div>
-          
         </div>
         <div className="w-full mt-4 md:w-[30%] flex flex-col gap-3 px-4">
           <div className="w-full h-full py-4  bg-[#14b7a1] flex flex-col gap-3 px-4 rounded-md">

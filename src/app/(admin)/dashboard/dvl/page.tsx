@@ -1,7 +1,7 @@
 "use client";
-import Header from "@/components/Header";
+
 import Spinner from "@/components/Spinner";
-import { baseURL } from "@/components/utils/api";
+import ApiController, { baseURL } from "@/components/utils/api";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -22,7 +22,7 @@ import { Pagination } from "@/components/Pagination";
 import { useSearchParams } from "next/navigation";
 const Dvl = () => {
   const query = useSearchParams();
-  const page = query.get("page");
+  const page = query.get("page") as string;
   const {data: session,status} = useSession()
   useEffect(() => {
     if(status === "authenticated"){
@@ -35,20 +35,11 @@ const Dvl = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const getDvls = async () => {
- setLoading(true)
-    try {
-      const currentPage = page || 1;
-      //@ts-ignore
-      const token = session?.user.token 
-      const getDvlForPay = await fetch(`${baseURL}dvls?page=${currentPage}`, {
-        method: "GET",
-        cache: "no-cache",
-        headers:{
 
-          Authorization:`Bearer ${token}`
-        }
-      });
-      const response = await getDvlForPay.json();
+    try {
+      //@ts-ignore
+      const token = session?.user.token;
+      const response = await ApiController.getDvls(page,token)
     
       setTotalPages(response.total)
       setDvl(response.dvl);
@@ -87,7 +78,7 @@ const Dvl = () => {
       volumeValue,
       categoryValue,
       selectvalue,
-      categoryValueArticle,
+     
       price
     } = filterValues;
       try {
@@ -123,6 +114,7 @@ const Dvl = () => {
       </section>
     );
   }
+   console.log(dvl)
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white  rounded-sm p-2">
   <div className="w-full flex items-center justify-between px-4">
@@ -147,6 +139,7 @@ const Dvl = () => {
             <TableCaption>DVLS á pagar</TableCaption>
             <Thead background={"#14b7a1"}>
               <Tr>
+              <Th color={"white"}>Data</Th>
               <Th color={"white"}></Th>
                 <Th color={"white"}>Nome</Th>
                 <Th color={"white"}>Preço Bruto</Th>
@@ -160,9 +153,10 @@ const Dvl = () => {
             </Thead>
             <Tbody>
               {dvl?.map((dvl: any, index: number) => (
+              
                 <Tr key={index}>
-                 
-                  <Td><img src={dvl.picture} alt={dvl.name}  className="w-16 h-16 object-cover"/></Td>
+                  <Td>{new Date(dvl.createDate).toLocaleString("pt-br")}</Td>
+                  <Td><img src={dvl.picture} alt={dvl.name}  className="w-16 h-16 object-cover"/> </Td>
                   <Td>{dvl.name}</Td>
                   <Td>
                       {Number(dvl?.price).toLocaleString("pt-br", {
@@ -173,7 +167,7 @@ const Dvl = () => {
                   <Td>
                     <Progress
                       colorScheme="green"
-                      value={(dvl.paidOut) / dvl.price}
+                      value={( dvl.toReceive / dvl.paidOut * 100)}
                     />
                   </Td>
                   
@@ -190,17 +184,17 @@ const Dvl = () => {
                     })}
                   </Td>
                   <Td>
-                    {dvl.toReceive === dvl.price ? (
+                    {dvl.paidOut === 0 ? (
                       <p className="text-red-500">Finalizado</p>
                     ) : (
                       <p className="text-green-500">Ativo</p>
                     )}
                   </Td>
                   <Td>
-                    {dvl.toReceive === dvl.price ? (
+                    {dvl.paidOut === 0 ? (
                       <p className="text-green-500">Pago</p>
                     ) : (
-                      <Link href={`/dashboard/dvl/${dvl.name}?price=${dvl.price}`}>
+                      <Link href={`/dashboard/dvl/${dvl.id}?price=${dvl.price}`}>
                         <button className="text-[#005183]">Pagar</button>
                       </Link>
                     )}

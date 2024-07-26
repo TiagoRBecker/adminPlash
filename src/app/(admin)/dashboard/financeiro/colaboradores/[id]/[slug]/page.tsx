@@ -16,10 +16,11 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
   const [errorText, setErrorText] = useState(false);
   const searchParams = useSearchParams();
 
-  const c = searchParams.get("commission");
   
-  const paidOutRounded = Math.ceil(Number(dvl?.paidOut * Number(c)));
+  
+  const paidOutRounded = Math.ceil(Number(dvl?.paidOut * dvl?.employee[0].commission));
   const slug = params.slug;
+   console.log(dvl?.employee[0].commission)
   useEffect(() => {
     if (status === "authenticated") {
       getDVLName();
@@ -48,6 +49,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
       return;
     }
   };
+
   const updateDvl = async (e: any) => {
  
     e.preventDefault();
@@ -56,7 +58,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
       setErrorText(true);
       return;
     }
-    if (pay > paidOutRounded) {
+    if (pay > dvl.paidOut) {
        
       Swal.fire({
         icon: "error",
@@ -90,7 +92,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
               Authorization: `Bearer ${token}`,
             },
 
-            body: JSON.stringify({ pay }),
+            body: JSON.stringify({ pay,id:dvl.employee[0].id }),
           }
         );
         if (update.status === 200) {
@@ -115,7 +117,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
     }
   };
  
-
+console.log(dvl)
   if (loading) {
     return <Spinner />;
   }
@@ -135,7 +137,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
             <span></span>
             <span className="text-red-500">
               Total á Pagar{" "}
-              {Math.ceil(Number(dvl?.paidOut)).toLocaleString(
+              {Number(dvl?.paidOut).toLocaleString(
                 "pt-br",
                 {
                   style: "currency",
