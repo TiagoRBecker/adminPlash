@@ -16,11 +16,11 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
   const [errorText, setErrorText] = useState(false);
   const searchParams = useSearchParams();
 
-  
-  
-  const paidOutRounded = Math.ceil(Number(dvl?.paidOut * dvl?.employee[0].commission));
+  const paidOutRounded = Math.ceil(
+    Number(dvl?.paidOut * dvl?.employee[0].commission)
+  );
   const slug = params.slug;
-   console.log(dvl?.employee[0].commission)
+  console.log(dvl?.employee[0].commission);
   useEffect(() => {
     if (status === "authenticated") {
       getDVLName();
@@ -51,7 +51,6 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
   };
 
   const updateDvl = async (e: any) => {
- 
     e.preventDefault();
     setErrorText(false);
     if (Number(pay) === 0) {
@@ -59,7 +58,6 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
       return;
     }
     if (pay > dvl.paidOut) {
-       
       Swal.fire({
         icon: "error",
         title: "Erro",
@@ -92,7 +90,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
               Authorization: `Bearer ${token}`,
             },
 
-            body: JSON.stringify({ pay,id:dvl.employee[0].id }),
+            body: JSON.stringify({ pay, id: dvl.employee[0].id }),
           }
         );
         if (update.status === 200) {
@@ -116,72 +114,73 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
       );
     }
   };
- 
-console.log(dvl)
+
+  console.log(dvl);
   if (loading) {
     return <Spinner />;
   }
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <div className="w-full">
-        <h1 className=" text-gray-500 text-2xl mb-8 text-center">
-          Pagar Divisão de Lucro para a revista {dvl?.name}
-        </h1>
-
-        <div className="w-full h-full flex flex-col md:flex-row md:w-[40%] mx-auto md:h-[500px] gap-3 ">
-          <div className="w-full md:w-[70%]">
-            <img src="/vol2.png" alt="" className="w-full h-full" />
+        <div className="w-full h-full flex flex-col md:flex-row md:w-[60%] mx-auto md:h-[600px] gap-3 ">
+          <div className="w-full md:w-[50%]">
+            <img src="/vol2.png" alt="" className="w-full h-[600px] object-cover" />
           </div>
-          <div className="w-full md:w-[30%] flex flex-col gap-3">
-            <h1 className="uppercase font-bold">{dvl?.name}</h1>
-            <span></span>
-            <span className="text-red-500">
-              Total á Pagar{" "}
-              {Number(dvl?.paidOut).toLocaleString(
-                "pt-br",
-                {
-                  style: "currency",
-                  currency: "BRL",
-                }
-              )}
-            </span>
-            <span className="text-green-500">
-              Total Recebido{" "}
-              {Number(dvl?.toReceive).toLocaleString("pt-br", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
+          <div className="w-full md:w-[50%] border-[1px] border-gray-200 flex p-2 flex-col items-center justify-between gap-3">
+            <div className="w-full ">
+              <h1 className="uppercase font-bold">{dvl?.name}</h1>
+            </div>
+            <div className="w-full">
+              <div className="w-full flex items-center justify-between font-bold text-red-500 mb-[6px] ">
+                <span className="text-red-500">Total á Pagar:</span>
+                <span>
+                  {Number(dvl?.paidOut).toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </span>
+              </div>
+              <div className="w-full flex items-center justify-between font-bold text-green-500 mb-[6px]">
+                <span>Total Recebido: </span>
+                <span className="">
+                  {Number(dvl?.toReceive).toLocaleString("pt-br", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </span>
+              </div>
+
+              <form
+                className="w-full flex items-center justify-center md:flex flex-col mx-auto   gap-3 "
+                onSubmit={updateDvl}
+              >
+                <div className="w-full flex flex-col gap-2">
+                  <NumericFormat
+                    value={Number(pay)}
+                    onValueChange={(values) =>
+                      setPay(Number(values.value as any))
+                    }
+                    displayType={"input"}
+                    thousandSeparator={true}
+                    prefix={"R$ "}
+                    decimalSeparator={"."}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
+                  />
+                  {errorText && (
+                    <p className="text-sm text-red-600">
+                      Prrencha o campo com o valor corretamente!
+                    </p>
+                  )}
+                </div>
+                <button className="w-full px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
+                  Pagar
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-
-        <form
-          className="w-full flex items-center justify-center md:flex flex-col mx-auto   md:w-[40%] gap-3  mt-10"
-          onSubmit={updateDvl}
-        >
-          <div className="w-full flex flex-col gap-2">
-            <label htmlFor="">Pagar Valor </label>
-            <NumericFormat
-              value={Number(pay)}
-              onValueChange={(values) => setPay(Number(values.value as any))}
-              displayType={"input"}
-              thousandSeparator={true}
-              prefix={"R$ "}
-              decimalSeparator={"."}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
-            />
-            {errorText && (
-              <p className="text-sm text-red-600">
-                Prrencha o campo com o valor corretamente!
-              </p>
-            )}
-          </div>
-          <button className="px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
-            Pagar
-          </button>
-        </form>
       </div>
     </section>
   );

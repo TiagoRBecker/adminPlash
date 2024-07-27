@@ -15,7 +15,7 @@ const getCovers = async () => {
 
 const Eventes = async () => {
  const data = await getCovers()
- console.log(data)
+
  const currentDate = new Date()
   return (
     <div className="w-full h-full" >

@@ -75,7 +75,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
     <>
       <section className="w-full h-full flex flex-col gap-3 relative">
-        <div className="w-full flex items-center justify-between  fixed bg-white z-50 ">
+        <div className="w-full flex items-center justify-between  fixed bg-white z-50 border-b-[1px] border-gray-300">
           <aside className="">
             {PlacementExample()}
           </aside>
@@ -84,7 +84,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
           </div>
           </div>
 
-          <main className="w-full h-full py-[110px] bg-gray-200">
+          <main className="w-full h-full py-[108px] bg-white">
             {children}
           </main>
         

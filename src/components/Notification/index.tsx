@@ -41,7 +41,7 @@ useEffect(()=>{
     
 
       
-    <div className="w-full h-[80px] flex items-center gap-3">
+    <div className="w-full h-[80px] flex items-center gap-3 ">
     <div className="relative">
       <p className="cursor-pointer relative" onClick={showOrderMessage} >
         <svg

@@ -74,7 +74,7 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
       try {
         //@ts-ignore
         const token = session?.user.token;
-         await ApiController.updateDvl(slug, token, pay);
+        await ApiController.updateDvl(slug, token, pay);
         await Swal.fire(
           //@ts-ignore
           `Todos as reivistas com o nome ${dvl.name} foram pagas com sucesso! `,
@@ -103,70 +103,90 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <div className="w-full ">
-        <h1 className=" text-gray-500 text-2xl mb-8 text-center">
-          Pagar Divisão de Lucro para a revista {dvl?.name}
-        </h1>
+        
 
-        <div className="w-full h-full flex flex-col md:flex-row md:w-[40%] mx-auto md:h-[500px] gap-3 ">
-          <div className="w-full md:w-[70%]">
-            <img src={dvl?.picture} alt="" className="w-full h-full" />
-            <span>Data da compra {new Date(dvl.createDate).toLocaleString("pt-br")}</span>
+        <div className="w-full h-full flex flex-col md:flex-row md:w-[60%] mx-auto md:h-[600px] gap-3 ">
+          <div className="w-full md:w-[50%]">
+            <img
+              src={dvl?.picture}
+              alt=""
+              className="w-full h-[600px] object-cover"
+            />
           </div>
-          <div className="w-full md:w-[30%] flex flex-col gap-3">
-            <h1 className="uppercase font-bold">{dvl?.name}</h1>
-           
+          <div className="w-full md:w-[50%] border-[1px] border-gray-200  p-2 flex items-center justify-between flex-col gap-3">
+            <div className="w-full">
+              <h1 className="uppercase font-bold">{dvl?.name}</h1>
+              <span className="text-blue-400">
+                Data da compra{" "}
+                {new Date(dvl.createDate).toLocaleString("pt-br")}
+              </span>
+              <div className="w-full flex items-center justify-between font-bold text-green-500 mb-[6px] ">
+              <span>Total do DVL</span>
             <span>
-              Total do DVL{" "}
-              {Number(price * 2).toLocaleString("pt-br", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-            <span className="text-green-500">
-              Recebido{" "}
-              {Number(dvl?.toReceive).toLocaleString("pt-br", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-            <span className="text-red-500">
-              Pagar{" "}
-              {Number(dvl?.paidOut).toLocaleString("pt-br", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </span>
-            
+                
+                {Number(price * 2).toLocaleString("pt-br", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+              </div>
+            </div>
+            <div className="w-full">
+            <div className="w-full flex items-center justify-between font-bold text-red-500 mb-[6px] ">
+              <span>Pagar</span>
+            <span className="">
+                
+                {Number(dvl?.paidOut).toLocaleString("pt-br", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+              </div>
+              <div className="w-full flex items-center justify-between font-bold text-green-500 mb-[6px] ">
+               <span>
+               Recebido
+               </span>
+               
+              <span >
+              
+                {Number(dvl?.toReceive).toLocaleString("pt-br", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </span>
+             </div>
+              <form
+                className="w-full flex items-center justify-center md:flex flex-col mx-auto   gap-3  mt-10"
+                onSubmit={updateDvl}
+              >
+                <div className="w-full flex flex-col gap-2">
+                  <label htmlFor="">Pagar Valor </label>
+                  <NumericFormat
+                    value={Number(pay)}
+                    onValueChange={(values) =>
+                      setPay(Number(values.value as any))
+                    }
+                    displayType={"input"}
+                    thousandSeparator={true}
+                    prefix={"R$ "}
+                    decimalSeparator={"."}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                    className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
+                  />
+                  {errorText && (
+                    <p className="text-sm text-red-600">
+                      Prrencha o campo com o valor corretamente!
+                    </p>
+                  )}
+                </div>
+                <button className="w-full px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
+                  Pagar
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-
-        <form
-          className="w-full flex items-center justify-center md:flex flex-col mx-auto   md:w-[40%] gap-3  mt-10"
-          onSubmit={updateDvl}
-        >
-          <div className="w-full flex flex-col gap-2">
-            <label htmlFor="">Pagar Valor </label>
-            <NumericFormat
-              value={Number(pay)}
-              onValueChange={(values) => setPay(Number(values.value as any))}
-              displayType={"input"}
-              thousandSeparator={true}
-              prefix={"R$ "}
-              decimalSeparator={"."}
-              decimalScale={2}
-              fixedDecimalScale={true}
-              className="w-full h-full outline-none border-[1px] border-gray-400 rounded-sm py-2 pl-3"
-            />
-            {errorText && (
-              <p className="text-sm text-red-600">
-                Prrencha o campo com o valor corretamente!
-              </p>
-            )}
-          </div>
-          <button className="px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
-            Pagar
-          </button>
-        </form>
       </div>
     </section>
   );
