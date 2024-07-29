@@ -80,7 +80,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
     try {
       //@ts-ignore
       const token = session?.user.token 
-      const request = await fetch(`${baseURL}event/${params.id}`, 
+      const request = await fetch(`${baseURL}events/${params.id}`, 
         { 
         method: "GET",
           cache:"no-cache",

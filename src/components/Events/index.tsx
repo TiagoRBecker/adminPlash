@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 const Events = () => {
   const { data: session, status } = useSession();
   const [data, setData] = useState([]);
+  const[ loading , setLoading] = useState(true)
   const getEvents = async () => {
     try {
       //@ts-ignore
@@ -22,23 +23,35 @@ const Events = () => {
       });
 
       const response = await events.json();
+       
       setData(response);
-
+setLoading(false)
       return response;
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
   };
   const currentDate = new Date();
 
   useEffect(() => {
     if (status === "authenticated") {
       getEvents();
+      return
     }
-  }, [status, <TimerComponent />, currentDate]);
+  }, [status,<TimerComponent/>]);
+  if(loading){
+    return(
+    <div className="w-full h-full">
+      <p className="text-gray-300">Carregando conteudo aguarde...</p>
+    </div>
+    )
+  }
   return (
     <div className="w-full h-full">
       <h1 className="w-full text-left text-[24px] font-bold  lg:text-[19px] text-dark-brown tracking-[-.0065em]  mb-4">
         Últimos eventos adicionados
       </h1>
+      
       <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-5">
         {data.map((events: any, index: number) => (
           <div className="w-full h-full " key={index}>
@@ -67,6 +80,7 @@ const Events = () => {
           </div>
         ))}
       </div>
+      
     </div>
   );
 };
