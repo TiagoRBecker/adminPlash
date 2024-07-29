@@ -4,8 +4,8 @@ import { baseURL, url } from "@/components/utils/api";
 import { Event, events } from "@/components/utils/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { Suspense, useEffect, useRef, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
@@ -15,7 +15,7 @@ import { ptBR } from "date-fns/locale/pt-BR";
 import TextEditor from "@/components/Editor";
 import { HStack, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { init } from "next/dist/compiled/webpack/webpack";
+
 type Data = {
   id: number;
   name: string;
@@ -45,7 +45,7 @@ type Data = {
 };
 ;
 const EventID =  ({ params }: { params: { id: string } }) => {
-  const {data:session} = useSession()
+  const {data:session,status} = useSession()
   const {
     register,
     handleSubmit,
@@ -75,30 +75,47 @@ const EventID =  ({ params }: { params: { id: string } }) => {
   const [employees,setEmployees] = useState([])
   const [sponsorrEvent,setSponsorsEvent] = useState([])
   const [content, setContent] = useState("");
-  useEffect(()=>{
-    getEvent()
-    getSponsors()
-  },[])
+ 
   const getEvent = async ()=>{
-    const request = await fetch(`${url}/event/${params.id}`, { method: "GET",  cache:"no-cache"});
+    try {
+      //@ts-ignore
+      const token = session?.user.token 
+      const request = await fetch(`${baseURL}event/${params.id}`, 
+        { 
+        method: "GET",
+          cache:"no-cache",
+        
+        headers:{
    
-     if(request.status === 200){
-      const response = await request.json();
-      const eventDateIniti = new Date(Number(response.date_event_initial));
-      const eventDateEnd = new Date(Number(response.date_event_end));
-      Object.keys(response).forEach((key: any) => {
-        setValue(key, response[key] as any);
-      });
-      setBanner(response.banner)
-      setCover(response.cover)
-      setContent(response.descript)
+        Authorization:`Bearer ${token}`
+      },});
+      
+     
   
-     setDataInitial(eventDateIniti)
-     setDateEnd(eventDateEnd)
-     setSponsorsEvent(response.sponsors)
+        const response = await request.json();
+       
+        const eventDateIniti = new Date(Number(response.date_event_initial));
+        const eventDateEnd = new Date(Number(response.date_event_end));
+        Object.keys(response).forEach((key: any) => {
+          setValue(key, response[key] as any);
+        });
+        setBanner(response.banner)
+        setCover(response.cover)
+        setContent(response.descript)
+    
+       setDataInitial(eventDateIniti)
+       setDateEnd(eventDateEnd)
+       setSponsorsEvent(response.sponsors)
+  
+       setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+    //@ts-ignore
+   
+     
 
-
-     }
   
    return
 
@@ -114,15 +131,23 @@ const EventID =  ({ params }: { params: { id: string } }) => {
     }
   } 
   const getSponsors = async () => {
-    const request = await fetch(`${url}/sponsors`, {
-      method: "GET",
-    });
-    const response = await request.json();
-   
-    setEmployees(response)
-    setLoading(false)
-    return;
-  };
+    //@ts-ignore
+     const token = session?.user.token 
+     const sponsors = await fetch(`${baseURL}sponsors`, {
+       method: "GET",
+       cache: "no-cache",
+       headers:{
+ 
+         Authorization:`Bearer ${token}`
+       },
+     });
+     const response = await sponsors.json()
+     
+     setEmployees(response.sponsors)
+     setLoading(false)
+    
+     return;
+   };
   const handleUploadBanner = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
     const files = e.target.files as any;
@@ -173,7 +198,6 @@ const EventID =  ({ params }: { params: { id: string } }) => {
     formData.append("banner", banner)
     formData.append("descript", content)
     formData.append("cover",cover)
-    formData.append("banner",banner)
     formData.append("newBanner",newBanner)
     formData.append("newCover",newCover)
     formData.append("date_event_initial", date_initial?.getTime())
@@ -289,7 +313,13 @@ const EventID =  ({ params }: { params: { id: string } }) => {
   };
  
 
- 
+  useEffect(()=>{
+    if(status === "authenticated"){
+      getEvent()
+      getSponsors()
+    }
+     
+    },[status])
   // Funçao de formatar data e hora
  if(loading){
   return(
@@ -298,12 +328,13 @@ const EventID =  ({ params }: { params: { id: string } }) => {
     </div>
   )
  }
+ 
   return (
   
       
       <section className="w-full h-full py-10 mt-16">
       <form
-        className="w-[80%] mx-auto flex flex-col gap-4   rounded-md  py-2 px-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)] "
+        className="w-[80%] mx-auto flex flex-col    rounded-md  py-2 px-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)] "
         encType="multipart/form-data"
         onSubmit={onSubmit}
       >
@@ -312,7 +343,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
         </h1>
 
         <div
-          className="flex flex-col  mt-4 gap-2
+          className="flex flex-col  mt-4 
             "
         >
           <label htmlFor="">Evento Nome</label>
@@ -329,7 +360,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
             )}
         </div>
         <div
-          className="flex flex-col  mt-4 gap-2
+          className="flex flex-col  mt-4
             "
         >
           <label htmlFor="">Responsavél pelo Evento</label>
@@ -346,7 +377,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
             )}
         </div>
         <div
-          className="flex flex-col  mt-4 gap-2
+          className="flex flex-col  mt-4 
             "
         >
           <label htmlFor="">E-mail</label>
@@ -364,7 +395,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
         </div>
 
         <div
-          className="flex flex-col  mt-4 gap-2
+          className="flex flex-col  mt-4 
             "
         >
           <label htmlFor="">Telefone</label>
@@ -530,7 +561,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
         </div>
 
         <div className="flex gap-1">
-          <div className="w-[50%] flex flex-col mt-4 gap-2 ">
+          <div className="w-[50%] flex flex-col mt-4  ">
             <label htmlFor="">Data Inícial </label>
 
             <DatePicker
@@ -546,7 +577,7 @@ const EventID =  ({ params }: { params: { id: string } }) => {
               minDate={new Date()}
             />
           </div>
-          <div className="w-[50%] flex flex-col mt-4 gap-2 ">
+          <div className="w-[50%] flex flex-col mt-4  ">
             <label htmlFor="">Data Final </label>
 
             <DatePicker
@@ -565,17 +596,17 @@ const EventID =  ({ params }: { params: { id: string } }) => {
         </div>
         
       
-        <div className="w-full  flex flex-col gap-2 items-center justify-between">
+        <div className="w-full  flex flex-col mt-4 items-center justify-between">
               <p className="text-left w-full">
                 Patrocinadores
               </p>
-              <div className="flex w-full gap-2">
+              <div className="flex w-full ">
                 <select
                   className="w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
                   {...register("sponsorID")}
                 >
-                  <option value="">Selecionar</option>
-                  {employees.map((employee: any, index: any) => (
+                  <option >Se necessário selecione um patrocinador</option>
+                  {employees?.map((employee: any, index: any) => (
                     <>
                       <option key={index} value={employee.id}>
                         {employee.name}
@@ -605,13 +636,13 @@ const EventID =  ({ params }: { params: { id: string } }) => {
                   </svg>
                 </button>
               </div>
-             {/*{errors.sponsorID && (
+             {errors.sponsorID && (
               <p className="text-red-400 text-sm w-full text-left">
                 {errors.sponsorID.message}
               </p>
              
             )}
-            */}
+            
               <div className="w-full flex flex-wrap">
               <HStack spacing={4}>
                 {sponsors?.map((employee: any, index: any) => (
@@ -630,8 +661,8 @@ const EventID =  ({ params }: { params: { id: string } }) => {
                 ))}
               </HStack>
             </div>
-            <h3 className="w-full text-left">Patrocinadores do Evento</h3>
-            <div className="w-full flex items-center gap-1 flex-wrap">
+            <h3 className="w-full text-left mt-4">Patrocinadores do Evento</h3>
+            <div className="w-full flex items-center  flex-wrap">
               
               {
                 sponsorrEvent?.map((sponsor:any,index:number)=>(
@@ -657,11 +688,13 @@ const EventID =  ({ params }: { params: { id: string } }) => {
 
             </div>
             </div>
+            <div className="mt-4">
           <TextEditor
           placeholder="Descriçao do Evento ..."
           content={content}
           setContent={setContent}
         />
+        </div>
         <div className="w-full  rounded-md flex items-center justify-center">
           <button
             className="w-40 py-2  bg-[#14b7a1] rounded-md  text-white "

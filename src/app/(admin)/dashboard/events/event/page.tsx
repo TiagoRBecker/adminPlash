@@ -46,8 +46,9 @@ const ViewEvent = () => {
         }
       );
       const response = await magazines.json();
-      setEvents(response.event);
-      setTotalPages(response.total)
+ 
+      setEvents(response.events);
+      setTotalPages(response.finalPage)
       setLoading(false);
       
     } catch (error) {
@@ -73,6 +74,7 @@ const ViewEvent = () => {
 
     if (del.isConfirmed) {
       try {
+        setLoading(true)
         //@ts-ignore
         const token = session?.user.token;
         const deletArticle = await fetch(`${baseURL}events/delet/${id}`, {
@@ -97,6 +99,7 @@ const ViewEvent = () => {
           "Clica no botão para continuar!",
           "error"
         );
+        setLoading(false)
       }
     }
   };
@@ -160,6 +163,7 @@ const ViewEvent = () => {
     }
     
   }, [status,page]);
+   
   if (loading)
     return (
       <section className="w-full h-screen flex items-center justify-center">
@@ -207,7 +211,7 @@ const ViewEvent = () => {
         />
       </div>
    
-      {events.length > 0 ? (
+      {events?.length > 0 ? (
         <div className="w-full h-full">
         <TableContainer width={"100%"}>
           <Table variant="simple" fontSize={14}>

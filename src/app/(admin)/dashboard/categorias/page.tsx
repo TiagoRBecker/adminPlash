@@ -18,24 +18,26 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 const CategoriesC = () => {
-  const { data: session } = useSession();
   useEffect(() => {
     getCategories();
   }, []);
+  const { data: session, status } = useSession();
+
   const [categories, setCategorie] = useState<any>([]);
   const [loading, setLoading] = useState(true);
 
   const getCategories = async () => {
     try {
+     
       const response = await ApiController.getCategories();
 
       setCategorie(response);
+   
       setLoading(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-      
-    
+
     return;
   };
 
@@ -52,18 +54,18 @@ const CategoriesC = () => {
     });
     if (del.isConfirmed) {
       try {
+        setLoading(true)
         //@ts-ignore
         const token = session?.user.token;
         //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
-         await ApiController.deleteCategories(token,id)
-          await Swal.fire(
-            "Categoria deletada com sucesso!!",
-            "Clica no botão para continuar!",
-            "success"
-          );
-          await getCategories();
-          return;
-        
+        await ApiController.deleteCategories(token, id);
+        await Swal.fire(
+          "Categoria deletada com sucesso!!",
+          "Clica no botão para continuar!",
+          "success"
+        );
+        await getCategories();
+        return;
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
@@ -82,6 +84,7 @@ const CategoriesC = () => {
       </section>
     );
   }
+
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white ">
       <div className="w-full flex flex-col md:flex-row items-center justify-between ">
@@ -124,16 +127,16 @@ const CategoriesC = () => {
                 <Tr>
                   <Th color={"white"}>Categorias</Th>
                   <Th color={"white"}>Revistas</Th>
-                  <Th color={"white"}>Artigos</Th>
+                
                   <Th color={"white"}>Ações</Th>
                 </Tr>
               </Thead>
-              <Tbody>
-                {categories?.map((cat: any, index: any) => (
+              {categories?.map((cat: any, index: number) => (
+                <Tbody key={index}>
                   <Tr>
                     <Td>{cat.name}</Td>
-                    <Td>{cat.magazine.length}</Td>
-                    <Td>{cat.article.length}</Td>
+                    <Td>{cat.magazine?.length}</Td>
+                  
 
                     <Td>
                       <div className="w-full h-full ">
@@ -151,17 +154,10 @@ const CategoriesC = () => {
                       </button>
                     </Td>
                   </Tr>
-                ))}
-              </Tbody>
+                </Tbody>
+              ))}
             </Table>
           </TableContainer>
-          <div className="w-full flex items-center justify-center mt-4">
-            <Link href={"/dashboard/categorias/adicionar_categoria"}>
-              <button className="px-4 py-2 bg-[#14b7a1]  rounded-md text-white">
-                Adicionar Categoria
-              </button>
-            </Link>
-          </div>
         </div>
       )}
     </section>

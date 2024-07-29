@@ -193,18 +193,7 @@ const ArticleID = ({ params }: { params: { id: string } }) => {
             <p className="text-red-400 text-sm">{errors.name.message}</p>
           )}
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="">Volume Artigo</label>
-            <input
-              {...register("volume")}
-              type="text"
-              className="w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
-              placeholder="Volume"
-            />
-          </div>
-          {errors.volume && (
-            <p className="text-red-400 text-sm">{errors.volume.message}</p>
-          )}
+         
           <div className="flex flex-col gap-1">
             <label htmlFor="">Editora do Artigo</label>
             <input

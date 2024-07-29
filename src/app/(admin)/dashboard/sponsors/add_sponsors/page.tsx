@@ -87,11 +87,13 @@ const Add_sponsors = () => {
           
           
           
-          if(addArticle.status === 409){
+          if(!addArticle.ok){
+             const response = await addArticle.json()
+              
             Swal.fire({
               icon: "error",
-              title: "Este patrocinador já possui cadastro no sistema!",
-              text: "Necessário usar outro email para cadastrar o patrocinador",
+              title: `${response.error}`,
+             
               
             });
             return

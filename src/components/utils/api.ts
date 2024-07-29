@@ -32,9 +32,11 @@ class Api {
         },
       });
       const response = await getMagazine.json();
+      
       return response;
     } catch (error) {
       console.log(error);
+      return
     }
   }
   async createMagazine(formData: any, token: string) {
@@ -49,11 +51,15 @@ class Api {
         },
         body: formData,
       });
-      const response = await createMagazine.json();
-      return response;
+      if(createMagazine.status === 200){
+        const response = await createMagazine.json();
+        return response;
+      }
+    
     } catch (error) {
       console.log(error);
       //Exibe o modal de erro caso exista um
+      return
     }
   }
   async updateMagazine(formData: any, token: string, slug: string) {
@@ -176,12 +182,15 @@ class Api {
       const response = await deleteArticle.json();
       return response;
     } catch (error) {
-      console.log(error);
+      
+      console.error(error);
+      return 
     }
   }
   async getCategories() {
     const getCat = await fetch(`${url}/categories`, {
       method: "GET",
+      cache:"no-cache"
     });
     const response = await getCat.json();
     return response;
@@ -293,7 +302,7 @@ class Api {
     try {
       //@ts-ignore
     
-      const getDvl = await fetch(`${baseURL}dvl/${slug}`, {
+      const getDvl = await fetch(`${baseURL}dvl-one/${slug}`, {
         method: "GET",
         cache: "no-cache",
         headers: {

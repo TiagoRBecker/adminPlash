@@ -35,11 +35,13 @@ const ArticleHome = () => {
     try {
       //@ts-ignore
       const token = session?.user.token;
-     
-      const response = await ApiController.getArticles(page,token);
+
+      const response = await ApiController.getArticles(page, token);
+
       setArticles(response.articles);
-      setTotalPages(response.total);
+      setTotalPages(response.finalPage);
       setLoading(false);
+      return;
     } catch (error) {
       console.log(error);
     }
@@ -90,24 +92,28 @@ const ArticleHome = () => {
 
     if (del.isConfirmed) {
       try {
-        await ApiController.deleteArticle(token,name,id)
+        setLoading(true)
+        await ApiController.deleteArticle(token, name, id);
 
         await Swal.fire(
           `Artigo ${name} deletado com sucesso!!`,
           "Clica no botão para continuar!",
           "success"
         );
-        await getArticles()
-        return
-          
+        await getArticles();
+        return;
       } catch (error) {
         console.log(error);
         //Exibe o modal de erro caso exista um
+        const response = await ApiController.deleteArticle(token, name, id);
+        console.log(response);
         await Swal.fire(
           "Erro ao deletar o artigo!",
           "Clica no botão para continuar!",
           "error"
         );
+        setLoading(false)
+        return;
       }
     }
   };
@@ -166,11 +172,11 @@ const ArticleHome = () => {
   };
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white ">
-     <div className="w-full flex flex-col md:flex-row items-center justify-between ">
-     <h1 className="uppercase text-gray-400">Artigos Cadastrados </h1>
+      <div className="w-full flex flex-col md:flex-row items-center justify-between ">
+        <h1 className="uppercase text-gray-400">Artigos Cadastrados </h1>
         <div className=" flex items-center justify-center mt-4">
           <Link
-           href={"/dashboard/artigos/cadastrar"}
+            href={"/dashboard/artigos/cadastrar"}
             className="text-white font-bold"
           >
             <button className="px-4 py-2 bg-[#14b7a1]  rounded-md  flex items-center gap-2">
@@ -188,13 +194,13 @@ const ArticleHome = () => {
                   d="M12 4.5v15m7.5-7.5h-15"
                 />
               </svg>
-              Adicionar 
+              Adicionar
             </button>
           </Link>
         </div>
       </div>
       <div className=" w-full h-full  md:flex md:h-[100px] items-center justify-around">
-      <Filter
+        <Filter
           onSubmitFilter={handlFilter}
           labels={labels}
           placeholders={placeholders}
@@ -205,11 +211,9 @@ const ArticleHome = () => {
           selectShow={true}
         />
       </div>
-      {articles.length === 0 ? (
+      {articles?.length === 0 ? (
         <div className="w-full h-full py-2 flex flex-col items-center justify-center gap-4">
           <p className="text-gray-400">Nenhum artigo encontrado!</p>
-      
-          
         </div>
       ) : (
         <div className="w-full">
@@ -223,13 +227,12 @@ const ArticleHome = () => {
                   <Th color={"white"}>Nome</Th>
                   <Th color={"white"}>Revista</Th>
                   <Th color={"white"}>Editora</Th>
-                  <Th color={"white"}>Volume</Th>
                   <Th color={"white"}>Categorias</Th>
                   <Th color={"white"}>Ações</Th>
                 </Tr>
               </Thead>
-                {articles?.map((book: any, index: any) => (
-              <Tbody key={index}>
+              {articles?.map((book: any, index: any) => (
+                <Tbody key={index}>
                   <Tr>
                     <Td>
                       <img
@@ -247,12 +250,14 @@ const ArticleHome = () => {
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        {book.magazine?.name ? book.magazine?.name : "Artigo não relacionado"}
+                        {book.magazine?.name
+                          ? book.magazine?.name
+                          : "Artigo não relacionado"}
                       </Text>
                     </Td>
 
                     <Td>{book?.company}</Td>
-                    <Td>{book.volume}</Td>
+
                     <Td className="capitalize">{switchName(book.status)}</Td>
 
                     <Td>
@@ -271,15 +276,13 @@ const ArticleHome = () => {
                       </button>
                     </Td>
                   </Tr>
-              </Tbody>
-                ))}
+                </Tbody>
+              ))}
             </Table>
           </TableContainer>
           <div className="flex items-center justify-center my-2">
             <Pagination totalPages={totalPages} pageParam="page" />
           </div>
-
-        
         </div>
       )}
     </section>

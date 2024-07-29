@@ -47,6 +47,7 @@ type Orders = {
   updateAt: string;
   userId: number;
   zip_code: string;
+  city:string
 };
 const OrderId = ({ params }: { params: { id: string } }) => {
    
@@ -61,7 +62,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<Orders | null>(null);
-
+console.log(orders)
   const getOrderID = async () => {
        
        try {
@@ -242,7 +243,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col gap-2">
             <div className="w-full px-1 md:w-[400px] bg-white rounded-md h-10 flex items-center pl-2">
               <h1>
-                Nome:{orders?.user.name} {orders?.user.lastName}
+                Nome: <span className="capitalize">{orders?.user.name} {orders?.user.lastName}</span>
               </h1>
             </div>
             <div className=" bg-white rounded-md h-10 flex items-center pl-2">
@@ -250,22 +251,22 @@ const OrderId = ({ params }: { params: { id: string } }) => {
                 target="_blank"
                 href={`https://api.whatsapp.com/send?phone=55${orders?.phone}&text=Seu%20pedido%20acaba%20de%20ser%20enviado.%20Obrigado%20por%20escolher%20nossos%20servi%C3%A7os!%0AAcompanhar%20Pedido:%20${cod}`}
               >
-                <p>Telefone:{orders?.phone}</p>
+                <p>Telefone: <span className="capitalize">{orders?.phone}</span></p>
               </Link>
             </div>
             <div className=" bg-white rounded-md h-10 flex items-center pl-2">
-              <p>Complemento: {orders?.complement}</p>
+              <p>Complemento: <span className="capitalize">{orders?.complement}</span></p>
             </div>
             <div className=" bg-white rounded-md h-10 flex items-center pl-2">
               <p>
-                End:{orders?.street} / N°{orders?.street_number}
+                End: <span className="capitalize">{orders?.street} / N°{orders?.street_number}</span>
               </p>
             </div>
             <div className=" bg-white rounded-md h-10 flex items-center pl-2">
-              <p>Bairro:{orders?.neighborhood}</p>
+              <p>Bairro: <span className="capitalize">{orders?.neighborhood} </span></p>
             </div>
-            <div className=" bg-white rounded-md h-10 flex items-center pl-2">
-              <p>Cidade: </p>
+            <div className=" bg-white rounded-md h-10 flex items-center pl-2 ">
+              <p>Cidade: <span className="capitalize"> {orders?.city} </span></p>
             </div>
             <div className=" bg-white rounded-md h-10 flex items-center pl-2">
               <p>Cep: {orders?.zip_code}</p>

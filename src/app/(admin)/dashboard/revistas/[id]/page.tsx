@@ -67,8 +67,10 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
        const response = await ApiController.getEmployees(token)
 
       setEmployees(response.employee);
+      return
     } catch (error) {
       console.log(error);
+      return
     }
 
     return;
@@ -100,6 +102,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
         setLoadingPdf(false);
         return;
       } catch (error) {
+       
         console.log(error);
       }
     }
@@ -115,11 +118,11 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
     }
   };
   const getByMagazine = async () => {
-    setLoading(true)
+   
     try {
       
       const response = await ApiController.getMagazine(slug,token)
-
+    
       Object.keys(response.magazine).forEach((key: any) => {
         setValue(key, response.magazine[key] as any);
       });
@@ -133,7 +136,15 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
 
       return;
     } catch (error) {
+      const response = await ApiController.getMagazine(slug,token)
+      Swal.fire(
+        `${response.message}`,
+        "Clica no botão para continuar!",
+        "error"
+      );
+    
       console.log(error);
+      setLoading(false);
     }
   };
   const clearAvatar = () => {
@@ -144,6 +155,7 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
     setNewAvatar(null);
     setAvatar(null);
   };
+ 
 
   const clearPdf = () => {
     //@ts-ignore
@@ -209,12 +221,14 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
         //Apos concluido com sucesso exibe  o modal de revista atualizada e redireciona para rota de exibição das revistas
 
          await ApiController.updateMagazine(formData,token, slug)
+
         Swal.fire(
           "Revista atualizada com sucesso!!",
           "Clica no botão para continuar!",
           "success"
         );
         router.push("/dashboard/revistas");
+        return
        
       } catch (error) {
         console.log(error);
@@ -422,11 +436,11 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
                   </div>
                 </div>
                 <div className="w-full flex flex-wrap">
-                  <HStack spacing={4}>
                     {employeesID?.map((size: any, index: any) => (
+                  <HStack spacing={4} key={index}>
                       <Tag
                         size={"sm"}
-                        key={index}
+                       
                         borderRadius="full"
                         variant="solid"
                         colorScheme="green"
@@ -441,8 +455,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
                           }
                         />
                       </Tag>
-                    ))}
                   </HStack>
+                    ))}
                 </div>
               </div>
             )}

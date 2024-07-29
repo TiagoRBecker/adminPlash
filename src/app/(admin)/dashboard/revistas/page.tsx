@@ -33,7 +33,7 @@ const Magazines = () => {
   const token = session?.user.token;
 
   const query = useSearchParams();
-  const page = query.get("page");
+  const page = query.get("page") || 1;
   const [loading, setLoading] = useState(true);
   const [magazines, setMagazine] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -48,8 +48,9 @@ const Magazines = () => {
   const getMagazines = async () => {
     try {
       const response = await ApiController.getMagazines(page as string,token)
-      setMagazine(response.magazine);
-      setTotalPages(response.total);
+      console.log(response)
+      setMagazine(response.magazines);
+      setTotalPages(response.finalPage);
       setLoading(false);
     } catch (error) {
       console.log(error)
@@ -82,8 +83,8 @@ const Magazines = () => {
       }
     );
     const response = await magazines.json();
-    setMagazine(response.magazine);
-    setTotalPages(response.total);
+    setMagazine(response.magazines);
+      setTotalPages(response.finalPage);
     setLoading(false);
 
     return;
@@ -103,6 +104,7 @@ const Magazines = () => {
 
     if (del.isConfirmed) {
      try {
+      setLoading(true)
        await ApiController.deleteMagazines(id,name,token)
        await Swal.fire(
         `Revista ${name} deletado com sucesso!!`,
@@ -116,6 +118,7 @@ const Magazines = () => {
         "Clica no botão para continuar!",
         "error"
       );
+      setLoading(false)
      }
     }
   };

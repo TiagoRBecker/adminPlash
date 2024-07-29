@@ -115,7 +115,7 @@ const payMagazine = ({ params }: { params: { slug: string; id: string } }) => {
     }
   };
 
-  console.log(dvl);
+
   if (loading) {
     return <Spinner />;
   }

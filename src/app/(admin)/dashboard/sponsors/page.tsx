@@ -38,8 +38,9 @@ const sponsors = () => {
       },
     });
     const response = await sponsors.json();
+   
     setData(response.sponsors);
-    setTotalPages(response.total)
+    setTotalPages(response.finalPage)
     setLoading(false)
     return response;
   };
@@ -57,6 +58,7 @@ const sponsors = () => {
 
     if (del.isConfirmed) {
       try {
+        setLoading(true)
         //@ts-ignore
         const token = session?.user.token 
         const deletArticle = await fetch(`${baseURL}sponsor/delete/${id}`, {
@@ -85,6 +87,7 @@ const sponsors = () => {
           "Clica no botão para continuar!",
           "error"
         );
+        setLoading(false)
       }
     }
   };

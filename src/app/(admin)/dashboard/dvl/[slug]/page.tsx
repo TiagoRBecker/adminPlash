@@ -31,8 +31,8 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
       const token = session?.user.token;
 
       const response = await ApiController.getDVLName(slug, token);
-
-      setDvl(response);
+     console.log(response)
+      setDvl(response); 
       setLoading(false);
       return;
     } catch (error) {
@@ -118,7 +118,7 @@ const DvlID = ({ params }: { params: { slug: string } }) => {
               <h1 className="uppercase font-bold">{dvl?.name}</h1>
               <span className="text-blue-400">
                 Data da compra{" "}
-                {new Date(dvl.createDate).toLocaleString("pt-br")}
+                {new Date(dvl?.createDate).toLocaleString("pt-br")}
               </span>
               <div className="w-full flex items-center justify-between font-bold text-green-500 mb-[6px] ">
               <span>Total do DVL</span>

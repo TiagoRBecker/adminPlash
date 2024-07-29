@@ -47,7 +47,7 @@ const OrderAlls = () => {
   const [loading, setLoading] = useState(true);
   
   const [ orders ,setOrders] = useState<Orders[]>([])
-  
+  console.log(orders)
    const getAllOrders = async ()=>{
      //@ts-ignore
      const token = session?.user.token
@@ -99,10 +99,11 @@ const OrderAlls = () => {
     
     } = filterValues;
     try {
+       const sts = volumeValue?.toLowerCase()
       //@ts-ignore
       const token = session?.user.token;
       const magazines = await fetch(
-        `${baseURL}orders?name=${nameValue}&email=${companyValue}&city=${categoryValue}&status=${volumeValue}&id=${authorValue}&take=${selectvalue}&date=${date_initial}`,
+        `${baseURL}orders?name=${nameValue}&email=${companyValue}&city=${categoryValue}&status=${sts}&id=${authorValue}&take=${selectvalue}&date=${date_initial}`,
         {
           method: "GET",
           cache: "no-cache",

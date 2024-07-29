@@ -76,6 +76,7 @@ const Colaborades = () => {
     });
     if (delt.isConfirmed) {
       try {
+        setLoading(true)
         //@ts-ignore
         const token = session?.user.token;
         const res = await fetch(`${baseURL}employee-delete`, {
@@ -103,6 +104,7 @@ const Colaborades = () => {
           "Clica no botão para continuar!",
           "error"
         );
+        setLoading(false)
       }
     }
   };

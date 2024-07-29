@@ -44,33 +44,28 @@ type User = {
 };
 const OrderId = ({ params }: { params: { id: string } }) => {
   const { data: session, status } = useSession();
-  useEffect(() => {
-    if (status === "authenticated") {
-      getOrderID();
-      return;
-    }
-  }, [status]);
+  
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
-  const [total, setTotal] = useState<Number | null>(null);
+  const [total, setTotal] = useState<Number | null>(0);
   const [pay, setPay] = useState(0);
 
-  const getOrderID = async () => {
+  const getUserFinance = async () => {
     try {
       //@ts-ignore
       const token = session?.user.token;
-      const order = await fetch(`${baseURL}users/${params.id}`, {
+      const user = await fetch(`${baseURL}users/${params.id}`, {
         method: "GET",
         cache: "no-cache",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const response = await order.json();
-     
-      setTotal(response.user.availableForWithdrawal);
-      setUser(response.user);
+      const response = await user.json();
+   
+      setTotal(response?.availableForWithdrawal);
+      setUser(response);
       setLoading(false);
       return;
     } catch (error) {
@@ -96,7 +91,7 @@ const OrderId = ({ params }: { params: { id: string } }) => {
     (acc: any, currentValue: any) => acc + currentValue.toReceive,
     0
   );
-  console.log(total)
+ 
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const custom = "flex items-center";
@@ -162,7 +157,12 @@ const OrderId = ({ params }: { params: { id: string } }) => {
       }
     }
   };
-
+  useEffect(() => {
+    if (status === "authenticated") {
+      getUserFinance();
+      return;
+    }
+  }, [status]);
   if (loading) {
     return (
       <div className=" w-full h-screen flex items-center justify-center">

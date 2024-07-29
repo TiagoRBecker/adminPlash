@@ -23,7 +23,7 @@ export const user = z.object({
 });
 export const article = z.object({
   name: z.string().min(1, { message: "Campo Obrigatorio" }),
-  volume: z.string().min(1, { message: "Campo Obrigatorio" }),
+
   author: z.string().min(1, { message: "Campo Obrigatorio" }),
  
   company: z.string().min(1, { message: "Campo Obrigatorio" }),
@@ -123,7 +123,16 @@ export const events = z.object({
   email: z.string().min(1,{message:"Necessário preencher  o email"}),
   phone: z.string().min(11,{message:"Necessário preencher  o campo telefone"}),
   organizer: z.string().min(1,{message:"Necessário preencher  o campo  organizador"}),
-  sponsorID: z.string().min(1,{message:"Necessário adicionar um patrocinador"}),
+  sponsorID: z.string().min(1, { message: "Necessário adicionar um patrocinador" }).optional(),
+
+ 
+  
+})
+export const coverEvent = z.object({
+  name: z.string().min(1,{message:"Necessário preencher  o campo  nome"}),
+
+  desc: z.string().min(11,{message:"Necessário preencher o campo descrição"}),
+ 
 
  
   
@@ -147,23 +156,6 @@ export type Filter = z.infer<typeof filter>;
 export type Event = z.infer<typeof events>;
 export type Order = z.infer<typeof order>;
 export type Sponsor = z.infer<typeof sponsor>;
+export type Covers = z.infer<typeof coverEvent>;
 
-/*
-  code       String
-  descript   String
-  price      Float
-  bedrooms   String
-  UF         String
-  city       String
-  district   String
-  catId      Int
-  meters     String
-  garage     String
-  suite      String
-  categories Categories @relation(fields: [catId], references: [id])
-  images     String[]
-  createAt   DateTime   @default(now())
-  updateAt   DateTime?
-  User       User?      @relation(fields: [userId], references: [id])
-  userId     Int?
-  */
+

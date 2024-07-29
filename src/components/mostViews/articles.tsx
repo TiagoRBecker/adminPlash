@@ -16,6 +16,7 @@ const getArticlesMostViews = async ()=>{
 }
 const articlesMostViews = async () => {
     const data = await getArticlesMostViews()
+     console.log(data)
     
     return ( 
         <div className="w-full h-full ">
@@ -27,7 +28,7 @@ const articlesMostViews = async () => {
       data.length > 0 ?
       <div className="w-full  h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 py-5">
       {
-          data.map((magazine:Magazine,index:number)=>(
+          data?.mostViews.map((magazine:Magazine,index:number)=>(
               <div className="w-full h-full  flex flex-col gap-1 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]   relative" key={index}>
              
               <img

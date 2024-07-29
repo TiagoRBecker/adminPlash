@@ -11,12 +11,23 @@ import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spinner";
 import { useSession } from "next-auth/react";
 import { EOF } from "dns";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { coverEvent, Covers } from "@/components/utils/validation";
 
 type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const AddEvent = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Covers>({
+    mode: "all",
+    resolver: zodResolver(coverEvent),
+  });
   const {data:session,status} = useSession()
   useEffect(() => {
     if(status === 'authenticated'){
@@ -47,56 +58,65 @@ const AddEvent = () => {
   const handleDateInitChange = (date: Date | [Date, Date] | null) => {
     onChange(date);
   };
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-     if(name === "" || descript === "" || selectedValues.length <= 0){
-      Swal.fire({
+  const onSubmit = handleSubmit(async (data) => {
+    // Validação de campos
+    if (selectedValues.length <= 0) {
+      await Swal.fire({
         icon: "error",
         title: "Por favor preencha os campos corretamente",
-        text: `Verificar campos vazios antes de cadastrar um novo evento`,
-        footer: 'Alerta de campo vazio!!!!'
+        text: "Verificar campos vazios antes de cadastrar um novo evento",
+        footer: "Alerta de campo vazio!!!!",
       });
-      setError(true)
-      return
-     }
+      setError(true);
+      return;
+    }
+  
     const date_event = value?.getTime();
+  
+    // Confirmar com o usuário
     const addEvent = await Swal.fire({
       position: "center",
       title: "Tem certeza?",
-      text: `Você deseja adicionar um novo  ${name}?`,
+      text: `Você deseja adicionar um novo evento ${name}?`,
       showCancelButton: true,
       cancelButtonText: "Cancelar",
       cancelButtonColor: "#d55",
       confirmButtonText: "Adicionar",
       confirmButtonColor: "#00FF00",
     });
+  
     if (addEvent.isConfirmed) {
       try {
-        //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
+        // Obtém o token do usuário
         //@ts-ignore
-        const token = session?.user.token 
+        const token = session?.user.token;
+  
+        // Envia a requisição para criar o evento
         const addArticle = await fetch(`${baseURL}create-event-cover`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization:`Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ selectedValues, name, date_event }),
+          body: JSON.stringify({
+           data,
+            date_event,
+            selectedValues 
+          }),
         });
-
-        if (addArticle.status === 200) {
+  
+        if (addArticle.ok) {
           await Swal.fire(
-            "Evento criado com sucesso!!",
+            "Evento criado com sucesso!",
             "Clica no botão para continuar!",
             "success"
           );
-
           router.push("/dashboard/covers_events");
-          return;
+        } else {
+          throw new Error(`Erro ao criar o evento: ${addArticle.statusText}`);
         }
       } catch (error) {
         console.log(error);
-        //Exibe o modal de erro caso exista um
         await Swal.fire(
           "Erro ao criar o evento!",
           "Clica no botão para continuar!",
@@ -104,8 +124,8 @@ const AddEvent = () => {
         );
       }
     }
-    
-  };
+  });
+  
   const getCovers = async () => {
     //@ts-ignore
     const token = session?.user.token
@@ -119,7 +139,7 @@ const AddEvent = () => {
     });
     const response = await request.json();
    
-    setCovers(response.magazine);
+    setCovers(response.magazines);
     setLoading(false)
     return;
   };
@@ -134,7 +154,7 @@ const AddEvent = () => {
       <form
         className="w-[80%] mx-auto flex flex-col gap-4   rounded-md  py-2 px-2 shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white"
         encType="multipart/form-data"
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
       >
         <h1 className="text-xl text-center text-gray-400 uppercase py-4">
           Cadastrar evento
@@ -142,15 +162,17 @@ const AddEvent = () => {
         <div className="flex flex-col gap-1">
           <label htmlFor="">Evento Nome</label>
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            {...register("name")}
             type="text"
             className={error ? "w-full h-7 outline-none border-[1px] border-red-600 rounded-sm pl-2":"w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"}
             placeholder="Nome evento"
           />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
         </div>
       
-          <div className="w-full h-16  flex flex-col mt-4 gap-2 ">
+          <div className="w-full h-16  flex flex-col mt-4  ">
             <label htmlFor="">Data Encerramento do evento </label>
 
             <DatePicker
@@ -169,15 +191,17 @@ const AddEvent = () => {
           <div className="flex flex-col gap-1">
           <label htmlFor="">Descrição do evento</label>
           <textarea
-            value={descript}
-            onChange={(e) => setDescript(e.target.value)}
+            {...register("desc")}
           
             className={error ? "w-full h-7 outline-none border-[1px] border-red-600 rounded-sm pl-2  min-h-[250px]":"w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2 min-h-[250px]"}
             placeholder="Descrição do evento!"
           />
+            {errors.desc && (
+              <p className="text-sm text-red-500">{errors.desc.message}</p>
+            )}
         </div>
        
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col ">
           <label htmlFor="">Revistas Cadastradas no sistema</label>
         <CheckboxGroup colorScheme="green">
           <Stack spacing={[1, 5]} direction={["column", "row"]}>

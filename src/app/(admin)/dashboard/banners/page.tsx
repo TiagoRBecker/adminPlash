@@ -47,6 +47,7 @@ const deletBanner = async (id:any,name:string) => {
  });
  if (del.isConfirmed) {
    try {
+    setLoading(true)
       //@ts-ignore
       const token = session?.user.token 
      
@@ -70,6 +71,7 @@ const deletBanner = async (id:any,name:string) => {
        "Clica no botão para continuar!",
        "error"
      );
+     setLoading(false)
    }
  }
 };

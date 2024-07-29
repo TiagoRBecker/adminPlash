@@ -11,9 +11,9 @@ import { useSession } from "next-auth/react";
 import { comission } from "@/components/Mock";
 
 const EditEmploye = ({ params }: { params: { id: string } }) => {
-  const {data:session,status} = useSession()
+  const { data: session, status } = useSession();
   const [avatar, setAvatar] = useState<string>("");
- const [newAvatar,setNewAvatar] = useState<any>("")
+  const [newAvatar, setNewAvatar] = useState<any>("");
   const [loading, setLoading] = useState(true);
   const slug = params.id;
   const router = useRouter();
@@ -29,55 +29,50 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
   });
 
   useEffect(() => {
-    if(status === "authenticated"){
-
+    if (status === "authenticated") {
       getUserId();
     }
   }, [status]);
-     const getUserId = async () => {
-      //@ts-ignore
-      const token = session?.user.token
+  const getUserId = async () => {
+    //@ts-ignore
+    const token = session?.user.token;
 
     const get = await fetch(`${baseURL}employee/${slug}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization:`Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-     
     });
-    if(get.status == 200){
+    if (get.status == 200) {
       const data = await get.json();
- 
-      setAvatar(data?.avatar)
-     //Funçao para setar os values que vem  do banco de dados
-     //setValue("inputname", data.name..)
-     Object?.entries(data)?.forEach(([key, value]: any) => {
-       setValue(key as keyof User, value);
-     });
-     setLoading(false)
+
+      setAvatar(data?.avatar);
+      //Funçao para setar os values que vem  do banco de dados
+      //setValue("inputname", data.name..)
+      Object?.entries(data)?.forEach(([key, value]: any) => {
+        setValue(key as keyof User, value);
+      });
+      setLoading(false);
     }
-   
   };
- //Funçao caso usuario queira trocar a foto 
+  //Funçao caso usuario queira trocar a foto
   const upload = async (e: any) => {
-     const file = e.target.files[0]
-     
-    if(file){
+    const file = e.target.files[0];
+
+    if (file) {
       setNewAvatar(file);
       setLoading(false);
       return;
     }
-    
-    
-    }
-  
- //Funçao que envia os dados para backend
-  const onSubmit = handleSubmit(async (data:any) => {
-     const formData = new FormData()
-     formData.append("avatar",avatar)
-     formData.append("newProfile",newAvatar)
-     for (const key in data) {
+  };
+
+  //Funçao que envia os dados para backend
+  const onSubmit = handleSubmit(async (data: any) => {
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+    formData.append("newProfile", newAvatar);
+    for (const key in data) {
       formData.append(key, data[key] as any);
     }
     //Lib que faz o visual para cliente , questiona se ele realmente quer mudar os dados
@@ -91,19 +86,30 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
       confirmButtonText: "Adicionar",
       confirmButtonColor: "#00FF00",
     });
-    //Caso  a funçao acima seja true , os dados sao enviados para backend 
+    //Caso  a funçao acima seja true , os dados sao enviados para backend
     if (edit.isConfirmed) {
       try {
         //@ts-ignore
-        const token = session?.user.token 
+        const token = session?.user.token;
         //deleta a categoria e apos exibe  um modal Categoria deletada com sucesso!
         const addCat = await fetch(`${baseURL}employee-update/${slug}`, {
           method: "POST",
-          headers:{
-            Authorization:`Bearer ${token}`
-           },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           body: formData,
         });
+        if (!addCat.ok) {
+          const response = await addCat.json();
+          console.log(response);
+          await Swal.fire(
+            `${response.error}`,
+
+            "Clica no botão para continuar!",
+            "error"
+          );
+          return;
+        }
 
         await Swal.fire(
           "Usuário editado com sucesso!",
@@ -111,30 +117,31 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
           "success"
         );
         router.push("/dashboard/colaboradores");
-      } catch (error) {
+      } catch (error: any) {
         //Caso de erro exibe o erro de forma amigavel na tela
+
         console.log(error);
         //Exibe o modal de erro caso exista um
         await Swal.fire(
           "Erro ao editar o usuário!",
-          "Clica no botão para continuar!",
+          `${error?.message}` || "Erro desconhecido",
           "error"
         );
       }
     }
   });
- if(loading){
-  return(
-    <section className="w-full h-screen flex items-center justify-center">
-      <Spinner/>
-    </section>
-  )
- }
-  
+  if (loading) {
+    return (
+      <section className="w-full h-screen flex items-center justify-center">
+        <Spinner />
+      </section>
+    );
+  }
+
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center   gap-4  bg-white  rounded-sm p-2">
       <h1 className="text-xl font-bold uppercase text-[#005183]">
-        Editar Colaborador 
+        Editar Colaborador
       </h1>
       <div className="w-full  flex flex-col items-center justify-center gap-2">
         {loading ? (
@@ -142,7 +149,7 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
         ) : (
           <>
             <img
-              src={ newAvatar ? URL.createObjectURL(newAvatar) :avatar}
+              src={newAvatar ? URL.createObjectURL(newAvatar) : avatar}
               alt="Perfil"
               className="w-20 h-20 object-cover rounded-full"
             />
@@ -202,7 +209,9 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
               placeholder="Digite a profissão"
             />
             {errors.profession && (
-              <p className="text-sm text-red-500">{errors.profession.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.profession.message}
+              </p>
             )}
           </div>
           <div className="flex flex-col w-full">
@@ -219,26 +228,26 @@ const EditEmploye = ({ params }: { params: { id: string } }) => {
               <p className="text-sm text-red-500">{errors.phone.message}</p>
             )}
           </div>
-          
+
           <div className="flex flex-col w-full">
             <label htmlFor="" className="text-lg text-gray-400">
-             Comissão
+              Comissão
             </label>
             <select
               {...register("commission")}
-              
               className="w-full outline-none border-[1px] border-gray-400 rounded-md pl-2 py-2"
               placeholder="Digite o telefone"
             >
-              {
-                comission.map((comission:any, index:number)=>(
-                  <option value={comission.value}>{comission.name}</option>
-                ))
-              }
-             
+              {comission.map((comission: any, index: number) => (
+                <option key={index} value={comission.value}>
+                  {comission.name}
+                </option>
+              ))}
             </select>
             {errors.commission && (
-              <p className="text-sm text-red-500">{errors.commission.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.commission.message}
+              </p>
             )}
           </div>
           <div className="flex flex-col w-full">

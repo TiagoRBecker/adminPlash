@@ -14,7 +14,7 @@ import TextEditor from "@/components/Editor";
 
 const Article = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { data: session } = useSession();
+  const { data: session,status } = useSession();
 
   //@ts-ignore
   const token = session?.user.token;
@@ -37,9 +37,7 @@ const Article = () => {
   const [errorPicture, setErrorPicture] = useState(false);
   const [content, setContent] = useState("");
   const router = useRouter();
-  useEffect(() => {
-    getCategories();
-  }, []);
+ 
   const getCategories = async () => {
     try {
       const response = await ApiController.getCategories();
@@ -128,6 +126,12 @@ const Article = () => {
       </section>
     );
   }
+  useEffect(() => {
+   
+      getCategories();
+    
+   
+  }, []);
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  p-2 gap-4  bg-white ">
       <form
@@ -165,18 +169,7 @@ const Article = () => {
               <p className="text-red-400 text-sm">{errors.name.message}</p>
             )}
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="">Volume Artigo</label>
-              <input
-                {...register("volume")}
-                type="text"
-                className="w-full h-7 outline-none border-[1px] border-gray-400 rounded-sm pl-2"
-                placeholder="Volume"
-              />
-            </div>
-            {errors.volume && (
-              <p className="text-red-400 text-sm">{errors.volume.message}</p>
-            )}
+            
             <div className="flex flex-col gap-1">
               <label htmlFor="">Editora do Artigo</label>
               <input

@@ -25,7 +25,7 @@ const ClientesFinance = () => {
   const page = query.get("page") || 1;
 
   const [totalPages, setTotalPages] = useState(0);
-  const [employees, setEmployees] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const getClientes = async () => {
     try {
@@ -39,10 +39,10 @@ const ClientesFinance = () => {
         },
       });
 
-      const data = await res.json();
-    
-      setTotalPages(data.total);
-      setEmployees(data.user);
+      const response = await res.json();
+      
+      setTotalPages(response.finalPage);
+      setUsers(response.users);
       setLoading(false);
       return;
     } catch (error) {
@@ -97,7 +97,7 @@ const ClientesFinance = () => {
       );
       const response = await magazines.json();
       setLoading(false);
-      setEmployees(response.user);
+      setUsers(response.users);
       setTotalPages(response.total);
     } catch (error) {
       console.log(error);
@@ -139,7 +139,7 @@ const ClientesFinance = () => {
         />
       </div>
       <div className="w-full">
-        {employees.length > 0 ? (
+        {users?.length > 0 ? (
           <div className="w-full">
             <TableContainer width={"100%"} className=" rounded-md">
               <Table variant="simple">
@@ -154,8 +154,8 @@ const ClientesFinance = () => {
                     <Th color={"white"}>Ações</Th>
                   </Tr>
                 </Thead>
-                <Tbody>
-                  {employees?.map((employee: any, index) => (
+                  {users?.map((employee: any, index:number) => (
+                <Tbody key={index}>
                     <Tr>
                       <Td>{employee.id}</Td>
                       <Td>
@@ -197,8 +197,8 @@ const ClientesFinance = () => {
                         </div>
                       </Td>
                     </Tr>
-                  ))}
                 </Tbody>
+                  ))}
               </Table>
             </TableContainer>
             <div className="flex items-center justify-center my-2">

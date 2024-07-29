@@ -35,6 +35,7 @@ const   CoverEvent = () => {
           Authorization: `Bearer ${token}`,
         }})
         const response = await request.json()
+       
         setCovers(response.covers)
         setTotalPages(response.total)
         setLoading(false)
@@ -91,9 +92,10 @@ const   CoverEvent = () => {
     });
 
     if (del.isConfirmed) {
-      setLoading(true)
+    
       try {
-        const deletArticle = await fetch(`${baseURL}delet-event-cover/${id}`, {
+        setLoading(true)
+        const deletEventCover = await fetch(`${baseURL}delet-event-cover/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -117,6 +119,7 @@ const   CoverEvent = () => {
           "Clica no botão para continuar!",
           "error"
         );
+        setLoading(false)
       }
     }
    }
@@ -142,9 +145,9 @@ const   CoverEvent = () => {
  
     return (  
       <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white  rounded-sm p-2">
-        <div className="w-full flex-col md:flex-row items-center justify-between px-4">
+        <div className="w-full flex flex-col md:flex-row items-center justify-between px-4">
         <h1 className="uppercase text-gray-400">Eventos de Capa </h1>
-        <div className=" flex items-center justify-center mt-4">
+        <div className="  flex items-center  mt-4">
               <Link href={"/dashboard/covers_events/add_event"} className="text-white font-bold">
               <button className="px-4 py-2 bg-[#14b7a1]  rounded-md  flex items-center gap-2">
                 <svg

@@ -60,6 +60,7 @@ const Add_Magazine = () => {
      const response = await ApiController.getCategories()
      
       setCategories(response);
+    
       return;
     } catch (error) {
       console.log(error);
@@ -124,7 +125,8 @@ const Add_Magazine = () => {
     });
     if (magazineAdd.isConfirmed) {
       try {
-        await ApiController.createMagazine(formData, token);
+        const response = await ApiController.createMagazine(formData, token);
+         console.log(response)
         await Swal.fire(
           "Revista adicionada com sucesso!!",
           "Clica no botão para continuar!",
@@ -134,13 +136,16 @@ const Add_Magazine = () => {
         router.push("/dashboard/revistas");
         return;
       } catch (error) {
-        console.log(error);
+        const response = await ApiController.createMagazine(formData, token);
+        console.log(response);
+      
         //Exibe o modal de erro caso exista um
         await Swal.fire(
-          "Erro ao adicionar a revista!",
+          `${response.message}`,
           "Clica no botão para continuar!",
           "error"
         );
+        return
       }
     }
   });
@@ -151,7 +156,7 @@ const Add_Magazine = () => {
     }
     setAvatar("");
   };
-   console.log(employees)
+   
 
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white ">
