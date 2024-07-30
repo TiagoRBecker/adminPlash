@@ -27,7 +27,7 @@ const   CoverEvent = () => {
     
        }
  
-    },[status])
+    },[status,page])
     const getEventsCover = async ()=>{
       try {
 

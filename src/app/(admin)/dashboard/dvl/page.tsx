@@ -114,7 +114,7 @@ const Dvl = () => {
       </section>
     );
   }
- console.log(dvl)
+
   return (
     <section className="container mx-auto h-full  flex  flex-col items-center  px-4 gap-4  bg-white  rounded-sm p-2">
   <div className="w-full flex items-center justify-between px-4">

@@ -37,9 +37,10 @@ const Colaborades = () => {
     if(status === "authenticated"){
       getEmployee();
     }
-  }, [status]);
+  }, [status,page]);
 
   const getEmployee = async () => {
+    setLoading(true)
     //@ts-ignore
     const token = session?.user.token 
     const res = await fetch(`${baseURL}employees?page=${page}`, {
