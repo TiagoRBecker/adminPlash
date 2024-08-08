@@ -146,7 +146,7 @@ export const sponsor = z.object({
   url: z.string().min(1,{message:"Necessário preencher  o campo  rede social"}),
   email: z.string().min(1,{message:"Necessário preencher  o email"}),
   phone: z.string().min(11,{message:"Necessário preencher  o campo telefone"}),
-  company: z.string().min(11,{message:"Necessário preencher  o campo empresa"}),
+  company: z.string().min(5,{message:"Necessário preencher  o campo empresa"}),
 })
 export type Login = z.infer<typeof login>;
 export type User = z.infer<typeof user>;

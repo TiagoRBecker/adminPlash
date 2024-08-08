@@ -378,8 +378,8 @@ const EditMagazine = ({ params }: { params: { id: string } }) => {
                 >
                   <option value="">Selecionar</option>
 
-                  <option value="digital">DIGITAL</option>
-                  <option value="impresso">IMPRESSO</option>
+                  <option value="Digital">DIGITAL</option>
+                  <option value="Impressa">IMPRESSO</option>
                 </select>
               </div>
             </div>

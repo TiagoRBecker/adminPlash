@@ -46,6 +46,7 @@ const Magazines = () => {
   }, [status, page]);
 
   const getMagazines = async () => {
+    setLoading(true)
     try {
       const response = await ApiController.getMagazines(page as string,token)
       console.log(response)

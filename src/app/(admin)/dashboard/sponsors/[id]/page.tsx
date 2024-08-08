@@ -54,6 +54,7 @@ const EditSponsor = ({ params }: { params: { id: string } }) => {
           setValue("url",response.url)
           setValue("email", response.email)
           setValue("phone",response.phone)
+          setValue("company",response.company)
           setCover(response.cover)
           setLoading(false)
     }
@@ -80,13 +81,13 @@ const EditSponsor = ({ params }: { params: { id: string } }) => {
     const onSubmit = handleSubmit(async (data) => {
      
       const formData = new FormData()
-      formData.append("file",cover as string)
+      formData.append("cover",cover as string)
       formData.append("newCover",newCover as string)
       formData.append("name",data.name as string)
       formData.append("url",data.url as string)
       formData.append("email",data.email as string)
       formData.append("phone",data.phone as string)
-      formData.append("phone",data.company as string)
+      formData.append("company",data.company as string)
     
       const addEvent = await Swal.fire({
         position: "center",
@@ -112,10 +113,10 @@ const EditSponsor = ({ params }: { params: { id: string } }) => {
             body: formData,
           });
   
-          if (addArticle.status === 409) {
+          if (!addArticle.ok) {
             Swal.fire({
               icon: "error",
-              title: "Este patrocinador já possui cadastro no sistema!",
+              title: "Erro ao editar o patrocinador!",
               text: "Necessário usar outro email para cadastrar o patrocinador",
               
             });

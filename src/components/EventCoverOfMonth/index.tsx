@@ -17,20 +17,22 @@ const Eventes = async () => {
  const data = await getCovers()
 
  const currentDate = new Date()
+const date = new Date(Number(data[0]?.date_event))
+ 
   return (
     <div className="w-full h-full" >
       {data?.map((event:any, index:any) => (
         <div key={index}>
           <div className="w-full flex flex-col gap-2  md:flex-row item justify-between ">
           <h1 className="w-full text-left text-[24px] font-bold  lg:text-[19px] text-dark-brown tracking-[-.0065em]  mb-4">
-        Votção capa do mês
+        Votação capa do mês
       </h1>
-          { currentDate > new Date(Number(event.date_event) ) ?
+          { currentDate > date ?
             <span className="w-1/2 h-[40px] bg-red-600 text-white py-2 px-2 rounded-md font-semibold">Encerrado</span>
           :
           <span className="w-1/2 h-[40px] bg-[#14b7a1] text-white py-2 px-2 rounded-md font-semibold">
               Encerramento:{" "}
-              {new Date(Number(event.date_event)).toLocaleDateString()}
+              {new Date(Number(data[0].date_event)).toLocaleDateString()}
             </span>
 
            }

@@ -102,53 +102,52 @@ const Add_Magazine = () => {
       setErrorPicture(true);
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("cover_file", avatar);
     formData.append("pdf", url);
-    //@ts-ignore
-    formData.append("price", price);
+    formData.append("price", price.toString());
     formData.append("employes", JSON.stringify(employeesID));
-
+  
     for (const key in data) {
       formData.append(key, data[key] as any);
     }
+  
     const magazineAdd = await Swal.fire({
       position: "center",
       title: "Tem certeza?",
-      text: `Você  deseja adicionar a ${data.name}?`,
+      text: `Você deseja adicionar a ${data.name}?`,
       showCancelButton: true,
       cancelButtonText: "Cancelar",
       cancelButtonColor: "#d55",
       confirmButtonText: "Adicionar",
       confirmButtonColor: "#00FF00",
     });
+  
     if (magazineAdd.isConfirmed) {
       try {
         const response = await ApiController.createMagazine(formData, token);
-         console.log(response)
+        console.log(response);
+  
         await Swal.fire(
           "Revista adicionada com sucesso!!",
-          "Clica no botão para continuar!",
+          "Clique no botão para continuar!",
           "success"
         );
-
+  
         router.push("/dashboard/revistas");
-        return;
       } catch (error) {
-        const response = await ApiController.createMagazine(formData, token);
-        console.log(response);
-      
-        //Exibe o modal de erro caso exista um
+        console.error('Error creating magazine:', error);
+  
         await Swal.fire(
-          `${response.message}`,
-          "Clica no botão para continuar!",
+          "Erro ao adicionar a revista.",
+          "Clique no botão para continuar!",
           "error"
         );
-        return
       }
     }
   });
+  
   const clearAvatar = (setAvatar: any) => {
     if (fileInputRef.current) {
       //@ts-ignore

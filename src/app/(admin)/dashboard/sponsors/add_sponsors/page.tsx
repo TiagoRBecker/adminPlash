@@ -90,12 +90,11 @@ const Add_sponsors = () => {
           if(!addArticle.ok){
              const response = await addArticle.json()
               
-            Swal.fire({
-              icon: "error",
-              title: `${response.error}`,
-             
-              
-            });
+             await Swal.fire(
+              "Erro ao criar PAtrocinador!!",
+              "Clica no botão para continuar!",
+              "error"
+            );
             return
           }
           await Swal.fire(
